@@ -712,7 +712,17 @@ def boxiamento_carga(page,
                     btn_avancar = page.locator('xpath=//*[@id="NM_BOT_AVA"]')
                     if btn_avancar.is_visible() and btn_avancar.is_enabled():
                         btn_avancar.click()
-                        continue
+                    else:
+                        page.locator('xpath=//*[@id="NM_BOT_PRC"]').click()
+                        page.wait_for_timeout(500)
+
+                        page.once("dialog", handle_dialog)
+                        
+                        page.wait_for_timeout(500)
+
+                        page.locator('xpath=//*[@id="NM_BOT_LIM"]').click()
+                        page.wait_for_timeout(500)
+                        break
 
         else:  
             logger.info(f"Zero cargas encontradas para a rota {rota}")
