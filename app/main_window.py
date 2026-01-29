@@ -31,7 +31,7 @@ class MainWindow(QMainWindow):
         self.matricula = matricula
         self.password = password
 
-        self.setWindowTitle("RPA - Online (Beta)")
+        self.setWindowTitle("RPA - Online")
 
         self.setup_topbar()
         self.setup_log_dock(log_handler)
