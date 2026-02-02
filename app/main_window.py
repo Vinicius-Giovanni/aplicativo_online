@@ -86,9 +86,8 @@ class MainWindow(QMainWindow):
         btn_boxiamento.clicked.connect(self.abrir_boxiamento)
 
         # configurações
-        btn_config = QPushButton("COnfigurações")
+        btn_config = QPushButton("Configurações")
         btn_config.clicked.connect(self.abrir_config)
-        layout.addWidget(btn_config)
 
         # logout
         btn_logout = QPushButton("Sair")
@@ -108,7 +107,6 @@ class MainWindow(QMainWindow):
         layout.addStretch()
         layout.addWidget(btn_logs)
         layout.addWidget(btn_logout)
-        
 
         sidebar.setLayout(layout)
 
@@ -158,10 +156,14 @@ class MainWindow(QMainWindow):
             password=self.password
         )
 
+        self.config_page = ConfigWindow()
+
         self.stack.addWidget(home)
         self.stack.addWidget(self.filter_page)
         self.stack.addWidget(self.emissao_page)
         self.stack.addWidget(self.boxiamento_page)
+        self.stack.addWidget(self.config_page)
+
         self.setCentralWidget(self.stack)
     
     # dock
@@ -186,17 +188,22 @@ class MainWindow(QMainWindow):
 
     # open windows
     def abrir_filtragem(self):
-        self.stack.setCurrentIndex(1)
+        self.stack.setCurrentWidget(self.filter_page)
         if self.log_dock:
             self.log_dock.show()
     
     def abrir_emissao(self):
-        self.stack.setCurrentIndex(2)
+        self.stack.setCurrentWidget(self.emissao_page)
         if self.log_dock:
             self.log_dock.show()
 
     def abrir_boxiamento(self):
-        self.stack.setCurrentIndex(3)
+        self.stack.setCurrentWidget(self.boxiamento_page)
+        if self.log_dock:
+            self.log_dock.show()
+
+    def abrir_config(self):
+        self.stack.setCurrentWidget(self.config_page)
         if self.log_dock:
             self.log_dock.show()
 
@@ -204,6 +211,3 @@ class MainWindow(QMainWindow):
         self.logout_requested.emit()
         self.close()
 
-    def abrir_config(self):
-        self.config_window = ConfigWindow()
-        self.config_window.show()
