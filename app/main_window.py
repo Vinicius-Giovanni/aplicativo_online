@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
     # setup de login
     def setup_topbar(self):
 
-        vs = str("1.7.3")
+        vs = str("1.7.4")
 
         topbar = QToolBar()
         topbar.setMovable(False)
