@@ -12,9 +12,7 @@ from PySide6.QtWidgets import QStackedWidget
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QToolBar
 
-from PySide6.QtCore import QThread
-from workers.prweb_worker import PrwebWorker
-
+from app.config_window import ConfigWindow
 from app.filter_window import FilterWindow
 from app.emissao_window import EmissaoWindow
 from app.boxiamento_de_carga import BoxiamentoCarga
@@ -87,6 +85,10 @@ class MainWindow(QMainWindow):
         btn_boxiamento = QPushButton("Boxiamento de Carga")
         btn_boxiamento.clicked.connect(self.abrir_boxiamento)
 
+        # configurações
+        btn_config = QPushButton("COnfigurações")
+        btn_config.clicked.connect(self.abrir_config)
+        layout.addWidget(btn_config)
 
         # logout
         btn_logout = QPushButton("Sair")
@@ -102,6 +104,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(btn_filtrar)
         layout.addWidget(btn_emitir)
         layout.addWidget(btn_boxiamento)
+        layout.addWidget(btn_config)
         layout.addStretch()
         layout.addWidget(btn_logs)
         layout.addWidget(btn_logout)
@@ -197,7 +200,10 @@ class MainWindow(QMainWindow):
         if self.log_dock:
             self.log_dock.show()
 
-
     def logout(self):
         self.logout_requested.emit()
         self.close()
+
+    def abrir_config(self):
+        self.config_window = ConfigWindow()
+        self.config_window.show()

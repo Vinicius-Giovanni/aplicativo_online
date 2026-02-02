@@ -1,6 +1,5 @@
 from playwright.sync_api import sync_playwright
 from settings.chromium_settings import launch_chromium_custom
-from settings.config import sp_rotas
 import re
 from tabulate import tabulate
 from logging import getLogger
@@ -21,6 +20,7 @@ def emissao_de_carga(page,
                 empresa,
                 matricula,
                 password,
+                rotas,
                 data: str):
     
     """
@@ -48,7 +48,7 @@ def emissao_de_carga(page,
     matricula_2 = page.locator("xpath=/html/body/form/table[3]/tbody/tr/td[6]/input[1]")
     matricula_2.type(matricula)
 
-    for rota in sp_rotas:
+    for rota in rotas:
 
         page.wait_for_timeout(500)
 
@@ -426,7 +426,8 @@ def boxiamento_carga(page,
                     empresa,
                     matricula,
                     password,
-                    data):
+                    data,
+                    rotas):
     """
     Realiza o boxiamento
     """
@@ -454,7 +455,9 @@ def boxiamento_carga(page,
     matricula_2.type(matricula)
     page.wait_for_timeout(500)
 
-    for rota in sp_rotas:
+
+
+    for rota in rotas:
         
         page.wait_for_timeout(500)
 
