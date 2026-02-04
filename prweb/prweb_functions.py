@@ -1,5 +1,6 @@
 from playwright.sync_api import sync_playwright
 from settings.chromium_settings import launch_chromium_custom
+from settings.config import sp_rotas
 import re
 from tabulate import tabulate
 from logging import getLogger
@@ -20,7 +21,6 @@ def emissao_de_carga(page,
                 empresa,
                 matricula,
                 password,
-                rotas,
                 data: str):
     
     """
@@ -48,7 +48,7 @@ def emissao_de_carga(page,
     matricula_2 = page.locator("xpath=/html/body/form/table[3]/tbody/tr/td[6]/input[1]")
     matricula_2.type(matricula)
 
-    for rota in rotas:
+    for rota in sp_rotas:
 
         page.wait_for_timeout(500)
 
@@ -165,11 +165,6 @@ def emissao_de_carga(page,
 
                         if estado_checkbox_antes == "checked": # <<< Checkbox estiver marcada
                             xpath_checkbox_emite.click() # <<< Desmarca checkbox
-
-                    elif status_carga == "Fechada" and "ANJUN" in xpath_transportadora: # status da carga = 'Fechada' e 'ANJUN' escrito no campo de transportadora
-
-                        if estado_checkbox_antes == "checked":
-                            xpath_checkbox_emite.click()
                         
                     elif status_carga == "Aberta": # <<< Status da carga = 'Aberta'
 
@@ -426,8 +421,7 @@ def boxiamento_carga(page,
                     empresa,
                     matricula,
                     password,
-                    data,
-                    rotas):
+                    data):
     """
     Realiza o boxiamento
     """
@@ -455,9 +449,7 @@ def boxiamento_carga(page,
     matricula_2.type(matricula)
     page.wait_for_timeout(500)
 
-
-
-    for rota in rotas:
+    for rota in sp_rotas:
         
         page.wait_for_timeout(500)
 
@@ -550,11 +542,7 @@ def boxiamento_carga(page,
                     xpath_contrato_ = page.locator(f"xpath=/html/body/form/table[8]/tbody/tr[2]/td/table[{i+1}]/tbody/tr[10]/td[2]")
 
                     if xpath_contrato_.count() == 0:
-                        if status_carga == "Fechada" and "ANJUN" in xpath_transportadora:
-                            if estado_checkbox_antes == "checked":
-                                xpath_checkbox_emite.click()
-                        
-                        elif status_carga == "Fechada":
+                        if status_carga == "Fechada":
                             if estado_checkbox_antes == "unchecked":
                                 xpath_checkbox_emite.click()
                         
@@ -578,13 +566,8 @@ def boxiamento_carga(page,
                     
                     estado_checkbox_antes = get_checkbox_state(xpath_checkbox_emite)
 
-                    # ============== Lógica de Checkbox Emite ==============
-                    if status_carga == "Fechada" and "ANJUN" in xpath_transportadora: # status da carga = 'Fechada' e 'ANJUN' escrito no campo de transportadora
-
-                        if estado_checkbox_antes == "checked":
-                            xpath_checkbox_emite.click()
-                    
-                    elif status_carga == "Fechada" : # <<< Status da carga = 'Fechada'
+                    # ============== Lógica de Checkbox Emite ==============             
+                    if status_carga == "Fechada" : # <<< Status da carga = 'Fechada'
 
                         if estado_checkbox_antes == "unchecked": # <<< Checkbox estiver desmarcado
                             xpath_checkbox_emite.click() # <<< Marca checkbox
@@ -606,14 +589,16 @@ def boxiamento_carga(page,
                             if estado_checkbox_antes == "checked": # <<< Checkbox estiver desmarcado
                                 xpath_checkbox_emite.click() # <<< Desmarca checkbox
 
-                        elif "ANJUN" in xpath_transportadora:
-                            xpath_valor_box.clear()
-
                         # Boxiamento levando em considerações a rota inserida
 
                         if rota == "2872":
                             xpath_valor_box.clear()
                             box = "840"
+                            xpath_valor_box.type(box)
+
+                        elif rota == "2950":
+                            xpath_valor_box.clear()
+                            box = "848"
                             xpath_valor_box.type(box)
                         
                         elif rota == "2873":
@@ -636,6 +621,11 @@ def boxiamento_carga(page,
                         elif "JT TRANSPORTES" in xpath_contrato:
                             xpath_valor_box.clear()
                             box = "849"
+                            xpath_valor_box.type(box)
+
+                        elif "ANJUN" in xpath_contrato:
+                            xpath_valor_box.clear()
+                            box = "848"
                             xpath_valor_box.type(box)
 
                         elif "PACIFICO" in xpath_contrato:
@@ -688,6 +678,11 @@ def boxiamento_carga(page,
                         elif "TRILOG" in xpath_transportadora:
                             xpath_valor_box.clear()
                             box = "839"
+                            xpath_valor_box.type(box)
+
+                        elif "ANJUN" in xpath_transportadora:
+                            xpath_valor_box.clear()
+                            box = "848"
                             xpath_valor_box.type(box)
 
                         elif "ASAP LOG" in xpath_transportadora:
