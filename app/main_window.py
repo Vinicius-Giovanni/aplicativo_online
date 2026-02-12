@@ -12,9 +12,6 @@ from PySide6.QtWidgets import QStackedWidget
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QToolBar
 
-from PySide6.QtCore import QThread
-from workers.prweb_worker import PrwebWorker
-
 from app.filter_window import FilterWindow
 from app.emissao_window import EmissaoWindow
 from app.boxiamento_de_carga import BoxiamentoCarga
@@ -46,7 +43,7 @@ class MainWindow(QMainWindow):
     # setup de login
     def setup_topbar(self):
 
-        vs = str("1.7.5")
+        vs = str("1.7.6")
 
         topbar = QToolBar()
         topbar.setMovable(False)

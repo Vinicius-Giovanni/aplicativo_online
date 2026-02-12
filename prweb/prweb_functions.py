@@ -680,6 +680,16 @@ def boxiamento_carga(page,
                             box = "839"
                             xpath_valor_box.type(box)
 
+                        elif "VENKON" in xpath_transportadora:
+                            xpath_valor_box.clear()
+                            box = "844"
+                            xpath_valor_box.type(box)
+
+                        elif "LOGAN" in xpath_transportadora:
+                            xpath_valor_box.clear()
+                            box = "842"
+                            xpath_valor_box.type(box)
+
                         elif "ANJUN" in xpath_transportadora:
                             xpath_valor_box.clear()
                             box = "848"
