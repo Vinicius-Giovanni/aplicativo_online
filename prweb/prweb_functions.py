@@ -623,6 +623,11 @@ def boxiamento_carga(page,
                             box = "849"
                             xpath_valor_box.type(box)
 
+                        elif "CARRIERS" in xpath_contrato:
+                            # Ignora carriers
+                            xpath_valor_box.clear()
+                            continue
+
                         elif "ANJUN" in xpath_contrato:
                             xpath_valor_box.clear()
                             box = "848"
@@ -679,6 +684,11 @@ def boxiamento_carga(page,
                             xpath_valor_box.clear()
                             box = "839"
                             xpath_valor_box.type(box)
+
+                        elif "CARRIERS" in xpath_transportadora:
+                            # Ignora carriers
+                            xpath_valor_box.clear()
+                            continue
 
                         elif "VENKON" in xpath_transportadora:
                             xpath_valor_box.clear()
