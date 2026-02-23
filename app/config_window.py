@@ -177,13 +177,19 @@ class ConfigWindow(QWidget):
     def salvar_configuracoes(self):
         rotas = [self.lista_rotas.item(i).text().strip() for i in range(self.lista_rotas.count())]
 
-        cargas_box = []
+        cargas_box = {}
         for i in range(self.lista_cargas_box.count()):
             item_text = self.lista_cargas_box.item(i).text()
             if "=>" not in item_text:
                 continue
             carga, box = item_text.split("=>", 1)
-            cargas_box[carga.strip()] = box.strip()
+            
+            carga = carga.strip()
+            box = box.strip()
+            if not carga:
+                continue
+            
+            cargas_box[carga] = box
 
         try:
             with open(self.app_config.ROTAS_FILE, "w", encoding="utf-8") as f:
