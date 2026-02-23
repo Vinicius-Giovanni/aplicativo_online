@@ -86,7 +86,7 @@ class MainWindow(QMainWindow):
         btn_boxiamento.clicked.connect(self.abrir_boxiamento)
 
         # configurações
-        btn_configuracoes = QPushButton("⚙️ Configurações Rotas")
+        btn_configuracoes = QPushButton("⚙️ Configurações")
         btn_configuracoes.clicked.connect(self.abrir_configuracoes)
 
         # logout
@@ -203,7 +203,7 @@ class MainWindow(QMainWindow):
             self.log_dock.show()
     
     def abrir_configuracoes(self):
-        self.config_page.carregar_rotas()
+        self.config_page.carregar_configuracoes()
         self.stack.setCurrentIndex(4)
         if self.log_dock:
             self.log_dock.show()
