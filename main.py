@@ -2,6 +2,7 @@ import sys
 from PySide6.QtWidgets import QApplication
 
 from app.login_window import LoginWindow
+from settings.config import AppConfig
 
 import os
 from pathlib import Path
@@ -32,11 +33,14 @@ def app():
 
     app.setWindowIcon(QIcon(str(icon_path)))
 
+    theme_source_path = resource_path(Path('app') / 'styles' / 'dark_theme.qss')
+    app_config = AppConfig(theme_source_path=theme_source_path)
+
     try:
-        with open(r"app\styles\dark_theme.qss", "r", encoding="utf-8") as f:
+        with open(app_config.DARK_THEME_FILE, "r", encoding="utf-8") as f:
             app.setStyleSheet(f.read())
     except FileNotFoundError:
-        logger.info("Arquivo dark_teme.qss não encontrado.")
+        logger.info("Arquivo dark_teme.qss não encontrado na pasta de configuração local.")
 
     # loggin window
     window = LoginWindow()
