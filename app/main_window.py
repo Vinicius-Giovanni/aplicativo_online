@@ -16,6 +16,7 @@ from app.filter_window import FilterWindow
 from app.emissao_window import EmissaoWindow
 from app.boxiamento_de_carga import BoxiamentoCarga
 from app.log_window import LogWindow
+from app.config_window import ConfigWindow
 
 class MainWindow(QMainWindow):
 
@@ -73,24 +74,27 @@ class MainWindow(QMainWindow):
         title.setAlignment(Qt.AlignCenter)
 
         # filter button
-        btn_filtrar = QPushButton("Filtrar Cargas")
+        btn_filtrar = QPushButton("🔍 Filtrar Cargas")
         btn_filtrar.clicked.connect(self.abrir_filtragem)
 
         # emitter button
-        btn_emitir = QPushButton("Emitir Cargas")
+        btn_emitir = QPushButton("📤 Emitir Cargas")
         btn_emitir.clicked.connect(self.abrir_emissao)
 
         # boxiamento
-        btn_boxiamento = QPushButton("Boxiamento de Carga")
+        btn_boxiamento = QPushButton("📦 Boxiamento de Carga")
         btn_boxiamento.clicked.connect(self.abrir_boxiamento)
 
+        # configurações
+        btn_configuracoes = QPushButton("⚙️ Configurações Rotas")
+        btn_configuracoes.clicked.connect(self.abrir_configuracoes)
 
         # logout
         btn_logout = QPushButton("Sair")
         btn_logout.clicked.connect(self.logout)
 
         # log
-        btn_logs = QPushButton("Registro")
+        btn_logs = QPushButton("📝 Registro")
         btn_logs.clicked.connect(self.toggle_logs)
 
         # posicao botoes
@@ -99,6 +103,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(btn_filtrar)
         layout.addWidget(btn_emitir)
         layout.addWidget(btn_boxiamento)
+        layout.addWidget(btn_configuracoes)
         layout.addStretch()
         layout.addWidget(btn_logs)
         layout.addWidget(btn_logout)
@@ -152,10 +157,13 @@ class MainWindow(QMainWindow):
             password=self.password
         )
 
+        self.config_page = ConfigWindow()
+
         self.stack.addWidget(home)
         self.stack.addWidget(self.filter_page)
         self.stack.addWidget(self.emissao_page)
         self.stack.addWidget(self.boxiamento_page)
+        self.stack.addWidget(self.config_page)
         self.setCentralWidget(self.stack)
     
     # dock
@@ -193,7 +201,12 @@ class MainWindow(QMainWindow):
         self.stack.setCurrentIndex(3)
         if self.log_dock:
             self.log_dock.show()
-
+    
+    def abrir_configuracoes(self):
+        self.config_page.carregar_rotas()
+        self.stack.setCurrentIndex(4)
+        if self.log_dock:
+            self.log_dock.show()
 
     def logout(self):
         self.logout_requested.emit()
