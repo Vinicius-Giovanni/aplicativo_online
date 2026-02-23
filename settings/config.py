@@ -14,14 +14,33 @@ class AppConfig:
         "2874", "2875", "2896", "2922",
         "2923", "2925", "2937", "2938",
         ]
+    
+    DEFAULT_CARGAS_BOX = {
+        "JT TRANSPORTES": "849",
+        "CARRIERS": "",
+        "ANJUN": "848",
+        "PACIFICO": "843",
+        "BRASIL WEB": "847",
+        "LOGAN": "842",
+        "VENKON": "844",
+        "SEDEX": "850",
+        "L MEGA 1200>1624": "840",
+        "L MEGA 1200>1475": "871",
+        "L MEGA 1200>1500": "872",
+        "L MEGA 1200>1760": "871",
+        "TRILOG": "839",
+        "ASAP LOG": "870"
+    }
 
     def __init__(self, theme_source_path: Path | None = None):
         self.CONFIG_ROTA = self._CREATE_CONFIG_DIRECTORY()
         self.ROTAS_FILE = self.CONFIG_ROTA / "rotas.json"
+        self.CARGAS_BOX_FILE = self.CONFIG_ROTA / "cargas_box.json"
         self.DARK_THEME_FILE = self.CONFIG_ROTA / 'dark_theme.qss'
         self.theme_source_path = Path(theme_source_path) if theme_source_path else None
 
         self._ensure_rotas_file()
+        self._ensure_cargas_box_file()
         self._ensure_dark_theme_file()
 
     def _CREATE_CONFIG_DIRECTORY(self) -> Path:
@@ -67,3 +86,12 @@ class AppConfig:
         
         with open(self.DARK_THEME_FILE, "w", encoding='utf-8') as target_file:
             target_file.write(theme_content)
+
+    def _ensure_cargas_box_file(self):
+        """
+        Cria o cargas_box.json se ele não existir,
+        Não sobreescreve.
+        """
+        if not self.CARGAS_BOX_FILE.exists():
+            with open(self.CARGAS_BOX_FILE, 'w', encoding='utf-8') as f:
+                json.dump(self.DEFAULT_CARGAS_BOX, f, indent=4, ensure_ascii=False)

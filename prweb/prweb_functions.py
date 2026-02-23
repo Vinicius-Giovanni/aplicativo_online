@@ -18,6 +18,14 @@ def _load_sp_rotas_from_config():
 
     return rotas_data.get("sp_rotas", [])
 
+def _load_cargas_box_from_config():
+    app_config = AppConfig()
+
+    with open(app_config.CARGAS_BOX_FILE, 'r', encoding='utf-8') as f:
+        cargas_box_data = json.load(f)
+
+    return cargas_box_data
+
 def start_browser():
     """
     Configura e inicia a instancia
@@ -462,6 +470,7 @@ def boxiamento_carga(page,
     page.wait_for_timeout(500)
 
     sp_rotas = _load_sp_rotas_from_config()
+    cargas_box_map = _load_cargas_box_from_config()
 
     for rota in sp_rotas:
         
@@ -605,124 +614,15 @@ def boxiamento_carga(page,
 
                         # Boxiamento levando em considerações a rota inserida
 
-                        if rota == "2872":
-                            xpath_valor_box.clear()
-                            box = "840"
-                            xpath_valor_box.type(box)
+                        for carga, _box in cargas_box_map.items():
 
-                        elif rota == "2950":
-                            xpath_valor_box.clear()
-                            box = "848"
-                            xpath_valor_box.type(box)
-                        
-                        elif rota == "2873":
-                            xpath_valor_box.clear()
-                            box = "871"
-                            xpath_valor_box.type(box)
-
-                        elif rota == "2874":
-                            xpath_valor_box.clear()
-                            box = "872"
-                            xpath_valor_box.type(box)
-                        
-                        elif rota == "2875":
-                            xpath_valor_box.clear()
-                            box = "871"
-                            xpath_valor_box.type(box)
-
-                         # Boxiamento levando em consideração o contrato
-
-                        elif "JT TRANSPORTES" in xpath_contrato:
-                            xpath_valor_box.clear()
-                            box = "849"
-                            xpath_valor_box.type(box)
-
-                        elif "CARRIERS" in xpath_contrato:
-                            # Ignora carriers
-                            xpath_valor_box.clear()
-                            continue
-
-                        elif "ANJUN" in xpath_contrato:
-                            xpath_valor_box.clear()
-                            box = "848"
-                            xpath_valor_box.type(box)
-
-                        elif "PACIFICO" in xpath_contrato:
-                            xpath_valor_box.clear()
-                            box = "843"
-                            xpath_valor_box.type(box)
-
-                        elif "BRASIL WEB" in xpath_contrato:
-                            xpath_valor_box.clear()
-                            box = "847"
-                            xpath_valor_box.type(box)
-
-                        elif "LOGAN" in xpath_contrato:
-                            xpath_valor_box.clear()
-                            box = "842"
-                            xpath_valor_box.type(box)
-
-                        elif "VENKON" in xpath_contrato:
-                            xpath_valor_box.clear()
-                            box = "844"
-                            xpath_valor_box.type(box)
-
-                        elif "SEDEX" in xpath_contrato:
-                            xpath_valor_box.clear()
-                            box = "850"
-                            xpath_valor_box.type(box)
-
-                        elif "L MEGA 1200>1624" in xpath_contrato:
-                            xpath_valor_box.clear()
-                            box = "840"
-                            xpath_valor_box.type(box)
-
-                        elif "L MEGA 1200>1475" in xpath_contrato:
-                            xpath_valor_box.clear()
-                            box = "871"
-                            xpath_valor_box.type(box)
-
-                        elif "L MEGA 1200>1500" in xpath_contrato:
-                            xpath_valor_box.clear()
-                            box = "872"
-                            xpath_valor_box.type(box)
-
-                        elif "L MEGA 1200>1760" in xpath_contrato:
-                            xpath_valor_box.clear()
-                            box = "871"
-                            xpath_valor_box.type(box)
-
-                        # Boxiameno levando em consideração a transportadora
-
-                        elif "TRILOG" in xpath_transportadora:
-                            xpath_valor_box.clear()
-                            box = "839"
-                            xpath_valor_box.type(box)
-
-                        elif "CARRIERS" in xpath_transportadora:
-                            # Ignora carriers
-                            xpath_valor_box.clear()
-                            continue
-
-                        elif "VENKON" in xpath_transportadora:
-                            xpath_valor_box.clear()
-                            box = "844"
-                            xpath_valor_box.type(box)
-
-                        elif "LOGAN" in xpath_transportadora:
-                            xpath_valor_box.clear()
-                            box = "842"
-                            xpath_valor_box.type(box)
-
-                        elif "ANJUN" in xpath_transportadora:
-                            xpath_valor_box.clear()
-                            box = "848"
-                            xpath_valor_box.type(box)
-
-                        elif "ASAP LOG" in xpath_transportadora:
-                            xpath_valor_box.clear()
-                            box = "870"
-                            xpath_valor_box.type(box)
+                            if box == "":
+                                continue
+                            
+                            elif carga in xpath_contrato or carga in xpath_transportadora:
+                                xpath_valor_box.clear()
+                                box = _box
+                                xpath_valor_box.type(box)
 
                     # ============== Tabela ==============
 
