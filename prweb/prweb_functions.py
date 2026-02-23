@@ -461,6 +461,8 @@ def boxiamento_carga(page,
     matricula_2.type(matricula)
     page.wait_for_timeout(500)
 
+    sp_rotas = _load_sp_rotas_from_config()
+
     for rota in sp_rotas:
         
         page.wait_for_timeout(500)
