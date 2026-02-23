@@ -44,6 +44,14 @@ class ConfigWindow(QWidget):
         add_layout_rotas.addWidget(self.btn_add_rota)
         layout.addLayout(add_layout_rotas)
 
+        # Cargas/Box
+        descricao_cargas_box = QLabel("Cargas / Box")
+        layout.addWidget(descricao_cargas_box)
+
+        self.lista_cargas_box = QListWidget()
+        self.lista_cargas_box.setSelectionMode(QListWidget.SingleSelection)
+        layout.addWidget(self.lista_cargas_box)
+
         add_layout_cargas = QHBoxLayout()
         self.input_carga = QLineEdit()
         self.input_carga.setPlaceholderText("Ex: JT TRANSPORTES")
@@ -54,7 +62,7 @@ class ConfigWindow(QWidget):
         self.btn_add_carga_box = QPushButton("Adicionar carga/box")
         self.btn_add_carga_box.clicked.connect(self.adicionar_carga_box)
 
-        add_layout_cargas.addWidget(self.input_rota)
+        add_layout_cargas.addWidget(self.input_carga)
         add_layout_cargas.addWidget(self.input_box)
         add_layout_cargas.addWidget(self.btn_add_carga_box)
         layout.addLayout(add_layout_cargas)
@@ -62,13 +70,13 @@ class ConfigWindow(QWidget):
         actions_layout = QHBoxLayout()
 
         self.btn_remover = QPushButton("Excluir selecionada")
-        self.btn_remover.clicked.connect(self.carregar_configuracoes)
+        self.btn_remover.clicked.connect(self.remover_item_selecionado)
 
         self.btn_recarregar = QPushButton("Recarregar")
         self.btn_recarregar.clicked.connect(self.carregar_configuracoes)
 
         self.btn_salvar = QPushButton("Salvar")
-        self.btn_salvar.clicked.connect(self.carregar_configuracoes)
+        self.btn_salvar.clicked.connect(self.salvar_configuracoes)
 
         actions_layout.addWidget(self.btn_remover)
         actions_layout.addWidget(self.btn_recarregar)
@@ -103,7 +111,7 @@ class ConfigWindow(QWidget):
         self.lista_cargas_box.clear()
 
         try:
-            with open(self.app_config.CARGAS_BOX_FILE, 'r', encoding='utf-8') as f:
+            with open(self.app_config.CARGAS_BOX_FILE, "r", encoding="utf-8") as f:
                 data = json.load(f)
         except FileNotFoundError:
             QMessageBox.warning(self, "Arquivo não encontrado", "cargas_box.json não encontrado. Será recriado com padrão.")
@@ -111,7 +119,7 @@ class ConfigWindow(QWidget):
             self.app_config._ensure_cargas_box_file()
             with open(self.app_config.CARGAS_BOX_FILE, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-        except json.JSONDEcodeError:
+        except json.JSONDecodeError:
             QMessageBox.critical(self, "Erro no JSON", "O arquivo carga_box.json está inválido.")
             return
         
@@ -133,7 +141,7 @@ class ConfigWindow(QWidget):
         self.lista_rotas.addItem(rota)
         self.input_rota.clear()
 
-    def adcionar_carga_box(self):
+    def adicionar_carga_box(self):
         carga = self.input_carga.text().strip()
         box = self.input_box.text().strip()
 
@@ -152,40 +160,40 @@ class ConfigWindow(QWidget):
         self.input_carga.clear()
         self.input_box.clear()
 
-        def remover_item_selecionado(self):
-            item_rota = self.lista_rotas.currentItem()
-            item_carga_box = self.lista_cargas_box.currentItem()
+    def remover_item_selecionado(self):
+        item_rota = self.lista_rotas.currentItem()
+        item_carga_box = self.lista_cargas_box.currentItem()
 
-            if item_rota:
-                self.lista_rotas.takeItem(self.lista_rotas.row(item_rota))
-                return
+        if item_rota:
+            self.lista_rotas.takeItem(self.lista_rotas.row(item_rota))
+            return
+        
+        if item_carga_box:
+            self.lista_cargas_box.takeItem(self.lista_cargas_box.row(item_carga_box))
+            return
+        
+        QMessageBox.warning(self, "Seleção obrigatória", "Selecione uma rota ou uma carga/box para excluir.")
+
+    def salvar_configuracoes(self):
+        rotas = [self.lista_rotas.item(i).text().strip() for i in range(self.lista_rotas.count())]
+
+        cargas_box = []
+        for i in range(self.lista_cargas_box.count()):
+            item_text = self.lista_cargas_box.item(i).text()
+            if "=>" not in item_text:
+                continue
+            carga, box = item_text.split("=>", 1)
+            cargas_box[carga.strip()] = box.strip()
+
+        try:
+            with open(self.app_config.ROTAS_FILE, "w", encoding="utf-8") as f:
+                json.dump({"sp_rotas": rotas}, f, indent=4, ensure_ascii=False)
             
-            if item_carga_box:
-                self.lista_cargas_box.takeItem(self.lista_cargas_box.row(item_carga_box))
-                return
-            
-            QMessageBox.warning(self, "Seleção obrigatória", "Selecione uma rota ou uma carga/box para excluir.")
+            with open(self.app_config.CARGAS_BOX_FILE, 'w', encoding='utf-8') as f:
+                json.dump(cargas_box, f , indent=4, ensure_ascii=False)
 
-        def salvar_configuracoes(self):
-            rotas = [self.lista_rotas.item(i).text().strip() for i in range(self.lista_rotas.count())]
+        except OSError as e:
+            QMessageBox.critical(self, "Erro ao salvar", f"Não foi possível salvar os arquivos de configuração.\n{e}")
+            return
 
-            cargas_box = []
-            for i in range(self.lista_cargas_box.count()):
-                item_text = self.lista_cargas_box.item(i).text()
-                if "=>" not in item_text:
-                    continue
-                carga, box = item_text.split("=>", 1)
-                cargas_box[carga.strip()] = box.strip()
-
-            try:
-                with open(self.app_config.ROTAS_FILE, "w", encoding="utf-8") as f:
-                    json.dump({"sp_rotas": rotas}, f, indent=4, ensure_ascii=False)
-                
-                with open(self.app_config.CARGAS_BOX_FILE, 'w', encoding='utf-8') as f:
-                    json.dump(cargas_box, f , indent=4, ensure_ascii=False)
-
-            except OSError as e:
-                QMessageBox.critical(self, "Erro ao salvar", f"Não foi possível salvar os arquivos de configuração.\n{e}")
-                return
-
-            QMessageBox.information(self, "Sucesso", "Configuraçãoes salvas com sucesso.")
+        QMessageBox.information(self, "Sucesso", "Configuraçãoes salvas com sucesso.")
