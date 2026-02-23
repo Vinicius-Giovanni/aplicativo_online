@@ -165,4 +165,4 @@ Sugestões de melhoria:
 
 ## 📄 Licença
 
-Defina a licença do projeto (ex.: MIT, Proprietária, Interna) conforme política da empresa.
+Interna conforme política da empresa.
