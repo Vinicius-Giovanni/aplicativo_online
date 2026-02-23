@@ -1,12 +1,22 @@
 from playwright.sync_api import sync_playwright
 from settings.chromium_settings import launch_chromium_custom
-from settings.config import sp_rotas
+from settings.config import AppConfig
+import json
 import re
 from tabulate import tabulate
 from logging import getLogger
 
 
 logger = getLogger("RPA")
+
+
+def _load_sp_rotas_from_config():
+    app_config = AppConfig()
+
+    with open(app_config.ROTAS_FILE, "r", encoding="utf-8") as f:
+        rotas_data = json.load(f)
+
+    return rotas_data.get("sp_rotas", [])
 
 def start_browser():
     """
@@ -47,6 +57,8 @@ def emissao_de_carga(page,
 
     matricula_2 = page.locator("xpath=/html/body/form/table[3]/tbody/tr/td[6]/input[1]")
     matricula_2.type(matricula)
+
+    sp_rotas = _load_sp_rotas_from_config()
 
     for rota in sp_rotas:
 
