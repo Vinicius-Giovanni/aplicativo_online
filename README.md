@@ -113,12 +113,12 @@ pytest
 Exemplo de empacotamento:
 
 ```bash
-pyinstaller main.py \
-  --onefile \
-  --windowed \
-  --icon=app/assets/icons/app.ico \
-  --add-data "app/assets;app/assets" \
-  --add-data "app/styles;app/styles" \
+pyinstaller main.py `
+  --onefile `
+  --windowed `
+  --icon=app/assets/icons/app.ico `
+  --add-data "app/assets;app/assets" `
+  --add-data "app/styles;app/styles" `
   --add-data "playwright;playwright"
 ```
 
