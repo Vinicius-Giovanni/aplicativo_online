@@ -17,6 +17,9 @@ class FilterWindow(QWidget):
         self.setup_ui()
 
     def setup_ui(self):
+        #SKU
+        self.sku = QLineEdit()
+        self.sku.setPlaceholderText(" Informe o SKU")
         # Datas
         self.dt_exp_retro = QLineEdit(maxLength=8)
         self.dt_exp_retro.setPlaceholderText("DDMMAAAA")
@@ -49,6 +52,7 @@ class FilterWindow(QWidget):
 
         # Layout
         form = QFormLayout()
+        form.addRow("SKU:", self.sku)
         form.addRow("Data Limite Expedição Retroativa:", self.dt_exp_retro)
         form.addRow("Data Limite Expedição Posterior:", self.dt_exp_post)
         form.addRow("Data Limite Expedição Início:", self.dt_exp_start)
@@ -84,6 +88,7 @@ class FilterWindow(QWidget):
             "empresa": self.empresa,
             "matricula": self.matricula,
             "password": self.password,
+            "sku": self.sku.text(),
             "dt_limite_exp_retro": self.dt_exp_retro.text(),
             "dt_limite_exp_posterior": self.dt_exp_post.text(),
             "dt_limite_exp_start": self.dt_exp_start.text(),

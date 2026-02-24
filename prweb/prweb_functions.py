@@ -376,7 +376,7 @@ def filtragem_de_carga(page,
     modalidade_da_rota.click()
 
     sku_ = page.locator("xpath=/html/body/form/table[4]/tbody/tr[3]/td[2]/input[1]")
-    sku_.type(sku_)
+    sku_.type(sku)
 
     data_limite_de_expedicao_retroativa = page.locator("xpath=/html/body/form/table[4]/tbody/tr[6]/td[2]/input[1]")
     data_limite_de_expedicao_retroativa.type(dt_limite_exp_retro)

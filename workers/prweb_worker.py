@@ -35,6 +35,7 @@ class PrwebWorker(QObject):
                     empresa=self.params["empresa"],
                     matricula=self.params["matricula"],
                     password=self.params["password"],
+                    sku=self.params.get("sku", ""),
                     dt_limite_exp_retro=self.params["dt_limite_exp_retro"],
                     dt_limite_exp_posterior=self.params["dt_limite_exp_posterior"],
                     dt_limite_exp_start=self.params["dt_limite_exp_start"],
