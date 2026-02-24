@@ -68,6 +68,8 @@ def emissao_de_carga(page,
 
     sp_rotas = _load_sp_rotas_from_config()
 
+    tabela_geral = []
+
     for rota in sp_rotas:
 
         page.wait_for_timeout(500)
@@ -252,8 +254,13 @@ def emissao_de_carga(page,
             matricula_2.type(matricula)
             continue
 
-        logger.info("TABELA BOXIAMENTO DE CARGAS")
-        logger.info(tabulate(tabela, headers="keys", tablefmt="grid"))
+        tabela_geral.extend(tabela)
+
+    if tabela_geral:
+        logger.info("TABELA FINAL - EMISSÃO DE CARGAS")
+        logger.info(tabulate(tabela_geral, headers="keys", tablefmt="grid"))
+    else:
+        logger.info("Nenhum registro encontrado para emissão de cargas;")
 
 def login_prweb(page,
                 empresa,
@@ -472,6 +479,8 @@ def boxiamento_carga(page,
     sp_rotas = _load_sp_rotas_from_config()
     cargas_box_map = _load_cargas_box_from_config()
 
+    tabela_geral = []
+
     for rota in sp_rotas:
         
         page.wait_for_timeout(500)
@@ -564,6 +573,15 @@ def boxiamento_carga(page,
 
                     xpath_contrato_ = page.locator(f"xpath=/html/body/form/table[8]/tbody/tr[2]/td/table[{i+1}]/tbody/tr[10]/td[2]")
 
+                    def get_checkbox_state(locator):
+                        return (
+                            "disabled" if locator.get_attribute("disabled") is not None
+                            else "checked" if locator.is_checked()
+                            else "unchecked"
+                        )
+                    
+                    estado_checkbox_antes = get_checkbox_state(xpath_checkbox_emite)
+
                     if xpath_contrato_.count() == 0:
                         if status_carga == "Fechada":
                             if estado_checkbox_antes == "unchecked":
@@ -579,15 +597,6 @@ def boxiamento_carga(page,
                     xpath_transportadora = page.locator(f"xpath=/html/body/form/table[8]/tbody/tr[2]/td/table[{i+1}]/tbody/tr[9]/td[2]").inner_text()
 
                     # ============== Condição: Se o status_carga for "Fechado" a checkbox EMITE deve ser "checked" ==============
-
-                    def get_checkbox_state(locator):
-                        return (
-                            "disabled" if locator.get_attribute("disabled") is not None
-                            else "checked" if locator.is_checked()
-                            else "unchecked"
-                        )
-                    
-                    estado_checkbox_antes = get_checkbox_state(xpath_checkbox_emite)
 
                     # ============== Lógica de Checkbox Emite ==============             
                     if status_carga == "Fechada" : # <<< Status da carga = 'Fechada'
@@ -684,5 +693,10 @@ def boxiamento_carga(page,
             matricula_2.type(matricula)
             continue
 
-        logger.info("TABELA BOXIAMENTO DE CARGAS")
-        logger.info(tabulate(tabela, headers="keys", tablefmt="grid"))
+        tabela_geral.extend(tabela)
+    
+    if tabela_geral:
+        logger.info("TABELA FINAL - BOXIAMENTO DE CARGAS")
+        logger.info(tabulate(tabela_geral, headers="keys", tablefmt="grid"))
+    else:
+        logger.info("Nenhum registro encontrado para boxiamento de cargas.")

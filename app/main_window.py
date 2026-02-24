@@ -17,6 +17,7 @@ from app.emissao_window import EmissaoWindow
 from app.boxiamento_de_carga import BoxiamentoCarga
 from app.log_window import LogWindow
 from app.config_window import ConfigWindow
+from app.log_export_window import LogExportWindow
 
 class MainWindow(QMainWindow):
 
@@ -32,7 +33,6 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("RPA - Online")
 
         self.setup_topbar()
-        self.setup_log_dock(log_handler)
 
         self.showMaximized()
 
@@ -40,6 +40,7 @@ class MainWindow(QMainWindow):
 
         self.setup_sidebar()
         self.setup_central()
+        self.setup_log_dock(log_handler)
 
     # setup de login
     def setup_topbar(self):
@@ -98,6 +99,10 @@ class MainWindow(QMainWindow):
         btn_configuracoes = QPushButton("⚙️ Configurações")
         btn_configuracoes.clicked.connect(self.abrir_configuracoes)
 
+        # export log
+        btn_export_logs = QPushButton("💾 Exportar Registro")
+        btn_export_logs.clicked.connect(self.abrir_exportacao_logs)
+
         # logout
         btn_logout = QPushButton("Sair")
         btn_logout.clicked.connect(self.logout)
@@ -113,6 +118,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(btn_emitir)
         layout.addWidget(btn_boxiamento)
         layout.addWidget(btn_configuracoes)
+        layout.addWidget(btn_export_logs)
         layout.addStretch()
         layout.addWidget(btn_logs)
         layout.addWidget(btn_logout)
@@ -167,12 +173,14 @@ class MainWindow(QMainWindow):
         )
 
         self.config_page = ConfigWindow()
+        self.log_export_page = LogExportWindow()
 
         self.stack.addWidget(home)
         self.stack.addWidget(self.filter_page)
         self.stack.addWidget(self.emissao_page)
         self.stack.addWidget(self.boxiamento_page)
         self.stack.addWidget(self.config_page)
+        self.stack.addWidget(self.log_export_page)
         self.setCentralWidget(self.stack)
     
     # dock
@@ -181,6 +189,9 @@ class MainWindow(QMainWindow):
 
         log_handler.emitter.log_sinal.connect(
             self.log_window.append_log
+        )
+        log_handler.emitter.log_sinal.connect(
+            self.log_export_page.append_log
         )
 
         self.log_dock = QDockWidget("Registros")
@@ -214,6 +225,11 @@ class MainWindow(QMainWindow):
     def abrir_configuracoes(self):
         self.config_page.carregar_configuracoes()
         self.stack.setCurrentIndex(4)
+        if self.log_dock:
+            self.log_dock.show()
+
+    def abrir_exportacao_logs(self):
+        self.stack.setCurrentIndex(5)
         if self.log_dock:
             self.log_dock.show()
 
