@@ -75,11 +75,15 @@ class ConfigWindow(QWidget):
         self.btn_recarregar = QPushButton("Recarregar")
         self.btn_recarregar.clicked.connect(self.carregar_configuracoes)
 
+        self.btn_restaurar_padrao = QPushButton("Restaurar padrões")
+        self.btn_restaurar_padrao.clicked.connect(self.restaurar_padrao)
+
         self.btn_salvar = QPushButton("Salvar")
         self.btn_salvar.clicked.connect(self.salvar_configuracoes)
 
         actions_layout.addWidget(self.btn_remover)
         actions_layout.addWidget(self.btn_recarregar)
+        actions_layout.addWidget(self.btn_restaurar_padrao)
         actions_layout.addWidget(self.btn_salvar)
         layout.addLayout(actions_layout)
 
@@ -203,3 +207,28 @@ class ConfigWindow(QWidget):
             return
 
         QMessageBox.information(self, "Sucesso", "Configuraçãoes salvas com sucesso.")
+
+    def restaurar_padrao(self):
+        resposta = QMessageBox.question(
+            self,
+            "Restaurar padrões",
+            "Deseja restaurar rotas e cargas/box para os valores padrão?",
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        )
+
+        if resposta != QMessageBox.Yes:
+            return
+        
+        try:
+            with open(self.app_config.ROTAS_FILE, "w", encoding='utf-8') as f:
+                json.dump({"sp_rotas": self.app_config.DEFAULT_ROTAS}, f, indent=4, ensure_ascii=False)
+
+            with open(self.app_config.CARGAS_BOX_FILE, "w", encoding='utf-8') as f:
+                json.dump(self.app_config.DEFAULT_CARGAS_BOX, f, indent=4, ensure_ascii=False)
+        except OSError as e:
+            QMessageBox.critical(self, "Erro ao restaurar", f"Não foi possível restaurar os arquivos padrão.\n{e}")
+            return
+        
+        self.carregar_configuracoes()
+        QMessageBox.information(self, "Sucesso", "Arquivos restaurados para o padrão.")

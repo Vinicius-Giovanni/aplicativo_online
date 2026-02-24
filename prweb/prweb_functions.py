@@ -616,7 +616,7 @@ def boxiamento_carga(page,
 
                         for carga, _box in cargas_box_map.items():
 
-                            if box == "":
+                            if _box == "":
                                 continue
                             
                             elif carga in xpath_contrato or carga in xpath_transportadora:
