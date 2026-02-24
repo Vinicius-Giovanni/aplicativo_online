@@ -636,7 +636,12 @@ def boxiamento_carga(page,
                             if _box == "":
                                 continue
                             
-                            elif carga in xpath_contrato or carga in xpath_transportadora:
+                            elif carga in xpath_contrato:
+                                xpath_valor_box.clear()
+                                box = _box
+                                xpath_valor_box.type(box)
+                            
+                            elif carga in xpath_transportadora:
                                 xpath_valor_box.clear()
                                 box = _box
                                 xpath_valor_box.type(box)
