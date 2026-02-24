@@ -316,6 +316,7 @@ def filtragem_de_carga(page,
                 empresa,
                 matricula,
                 password,
+                sku: str = "",
                 dt_limite_exp_retro: str = "",
                 dt_limite_exp_posterior: str = "",
                 dt_limite_exp_start: str = "",
@@ -374,6 +375,9 @@ def filtragem_de_carga(page,
     modalidade_da_rota.select_option(label=modalidade) # <<< Procurar por valor e não posição
     modalidade_da_rota.click()
 
+    sku_ = page.locator("xpath=/html/body/form/table[4]/tbody/tr[3]/td[2]/input[1]")
+    sku_.type(sku_)
+
     data_limite_de_expedicao_retroativa = page.locator("xpath=/html/body/form/table[4]/tbody/tr[6]/td[2]/input[1]")
     data_limite_de_expedicao_retroativa.type(dt_limite_exp_retro)
 
@@ -393,16 +397,20 @@ def filtragem_de_carga(page,
     if mono == "Sim":
         page.locator("xpath=/html/body/form/table[4]/tbody/tr[12]/td[2]/input[1]").click()
         logger.info("Cargas monotransportadas selecionadas")
-    elif multiplo == "Sim":
+    
+    if multiplo == "Sim":
         page.locator("xpath=/html/body/form/table[4]/tbody/tr[12]/td[2]/input[2]").click()
         logger.info("Cargas multitransportadas selecionadas")
-    elif B2B == "Sim":
+    
+    if B2B == "Sim":
         page.locator("xpath=/html/body/form/table[4]/tbody/tr[14]/td[2]/input[1]").click()
         logger.info("Cargas B2B selecionadas")
-    elif B2C == "Sim":
+    
+    if B2C == "Sim":
         page.locator("xpath=/html/body/form/table[4]/tbody/tr[14]/td[2]/input[2]").click()
         logger.info("Cargas B2C selecionadas")
-    elif CROSSDOCKING == "Sim":
+    
+    if CROSSDOCKING == "Sim":
         page.locator("xpath=/html/body/form/table[4]/tbody/tr[16]/td[2]/input").click()
         logger.info("Cargas CROSSDOCKING selecionadas")
 
