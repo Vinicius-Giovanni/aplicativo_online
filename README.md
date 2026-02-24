@@ -1,72 +1,73 @@
 # Aplicativo Online (RPA PRWEB)
 
-Aplicativo desktop em **Python + PySide6** para automatizar etapas operacionais no PRWEB, reduzindo tarefas manuais de programação de cargas e aumentando a velocidade do fluxo logístico.
-
----
+Aplicativo desktop em **Python + PySide6** para automatizar etapas operacionais no PRWEB, reduzindo tarefas manuais de programação de cargas e acelerando o fluxo logístico.
 
 ## 📌 Visão geral
 
-O projeto foi desenvolvido para transformar um processo repetitivo e demorado em uma operação guiada por interface, com execução automatizada via Playwright.
+O sistema transforma um processo repetitivo em uma operação guiada por interface gráfica, com execução automatizada via Playwright. Com isso, o time pode focar em análise e tomada de decisão, enquanto o aplicativo executa as etapas operacionais.
 
-Com o aplicativo, é possível concentrar a atuação do time em análise e tomada de decisão, enquanto o sistema executa automaticamente os passos operacionais no PRWEB.
+## 🧩 Funcionalidades
 
----
+- Login no PRWEB com interface gráfica.
+- Filtragem de cargas por data e modalidade.
+- Emissão de cargas automatizada.
+- Boxiamento de carga automatizado.
+- Painel de logs em tempo real.
+- Exportação de logs para análise operacional.
+- Configuração local automática de tema e rotas.
 
-## 🚀 Funcionalidades principais
+## 🖼️ Telas principais
 
-- **Login no PRWEB com interface gráfica**.
-- **Filtragem de cargas** com parâmetros de data e modalidade.
-- **Emissão de cargas** automatizada.
-- **Boxiamento de carga** automatizado.
-- **Painel de logs em tempo real** dentro do aplicativo.
-- **Tema escuro e configuração local automática** (rotas e estilo).
+### Janela de login
 
----
+![Janela de login](aplicativo_login_window.png)
 
-## 🧱 Arquitetura do projeto
+### Janela principal
 
-A aplicação é organizada por camadas simples:
+![Janela principal](aplicativo_main_window.png)
 
-- `app/`: telas e componentes da interface (login, painel principal, módulos operacionais e logs).
-- `workers/`: worker responsável por executar a automação em background.
-- `prweb/`: funções de automação com Playwright para login, filtragem, emissão e boxiamento.
-- `settings/`: configuração da aplicação (tema, diretório local, rotas padrão e Chromium customizado).
-- `log/`: configuração e integração de logs com a UI.
-- `main.py`: ponto de entrada da aplicação.
+## 🧱 Estrutura do projeto
 
----
+```text
+aplicativo_online/
+├── app/                 # Telas e componentes da UI
+├── log/                 # Logging e integração com Qt
+├── prweb/               # Funções de automação Playwright
+├── settings/            # Configurações de app e Chromium
+├── workers/             # Workers para execução em background
+├── main.py              # Ponto de entrada
+├── pyproject.toml       # Dependências e metadados
+└── README.md
+```
 
 ## 🛠️ Stack tecnológica
 
-- **Python 3.12+**
-- **PySide6** (interface desktop)
-- **Playwright** (automação web)
-- **Pandas / NumPy** (tratamento de dados)
-- **PyInstaller** (empacotamento para distribuição)
-
----
+- Python 3.12+
+- PySide6
+- Playwright
+- Pandas / NumPy
+- PyInstaller
+- Pytest (base para evolução de testes)
 
 ## ✅ Pré-requisitos
 
-Antes de executar o projeto, garanta que você tenha:
+Antes de executar:
 
-1. Python 3.12 ou superior
-2. Dependências instaladas
-3. Navegador do Playwright disponível na pasta esperada pelo app
+1. Python 3.12 ou superior.
+2. Dependências instaladas.
+3. Navegador do Playwright disponível na pasta esperada pela aplicação.
 
-> Observação: o projeto foi estruturado com foco em ambiente Windows (uso de `LOCALAPPDATA` e dependências específicas como `pywin32`).
-
----
+> **Observação:** o projeto foi estruturado com foco em ambiente Windows (uso de `LOCALAPPDATA` e dependência `pywin32`).
 
 ## 📦 Instalação
 
-### Opção 1 — usando `uv` (recomendado se você já usa uv)
+### Opção 1 — `uv` (recomendado)
 
 ```bash
 uv sync
 ```
 
-### Opção 2 — usando `pip`
+### Opção 2 — `pip`
 
 ```bash
 python -m venv .venv
@@ -76,62 +77,40 @@ pip install -U pip
 pip install -e .
 ```
 
----
-
-## ▶️ Executando localmente
+## ▶️ Execução local
 
 ```bash
 python main.py
 ```
 
-Ao iniciar, o app:
+Na inicialização, o app:
 
-- define a variável `PLAYWRIGHT_BROWSERS_PATH`;
-- carrega o tema escuro;
+- define `PLAYWRIGHT_BROWSERS_PATH`;
+- aplica o tema escuro;
 - cria arquivos de configuração local automaticamente quando necessário.
-
----
 
 ## ⚙️ Configuração local automática
 
-Na primeira execução, a aplicação cria uma pasta em `%LOCALAPPDATA%/config_app_online` com:
+Na primeira execução, a aplicação cria `%LOCALAPPDATA%/config_app_online` com:
 
 - `rotas.json` (rotas padrão);
-- `dark_theme.qss` (tema escuro para customização local).
+- `dark_theme.qss` (tema escuro customizável localmente).
 
-Essa estratégia permite ajustar tema/rotas sem editar o código-fonte.
+Isso permite ajustar tema e rotas sem alterar o código-fonte.
 
----
+## 🧪 Testes e validação
 
-## 🧪 Qualidade e testes
+Executar suíte atual:
 
-O projeto inclui `pytest` nas dependências, porém os testes automatizados ainda podem ser expandidos para cobrir:
-
-- fluxos da interface;
-- validação de parâmetros;
-- cenários de erro da automação no PRWEB.
-
----
-
-## 📁 Estrutura resumida
-
-```text
-aplicativo_online/
-├── app/
-├── log/
-├── prweb/
-├── settings/
-├── workers/
-├── main.py
-├── pyproject.toml
-└── README.md
+```bash
+pytest
 ```
 
----
+> O projeto já possui infraestrutura de testes, e pode evoluir para cobrir fluxos críticos de UI e cenários de erro de automação.
 
-## 🏗️ Empacotamento (build)
+## 🏗️ Build com PyInstaller
 
-Exemplo de build com PyInstaller:
+Exemplo de empacotamento:
 
 ```bash
 pyinstaller main.py \
@@ -143,26 +122,20 @@ pyinstaller main.py \
   --add-data "playwright;playwright"
 ```
 
----
-
 ## 🔒 Boas práticas operacionais
 
-- Utilize credenciais de acesso conforme políticas internas.
-- Evite executar múltiplas automações concorrentes com a mesma conta.
-- Monitore o painel de logs para auditoria e diagnóstico rápido.
-
----
+- Utilize credenciais conforme políticas internas.
+- Evite múltiplas automações concorrentes na mesma conta.
+- Monitore os logs para auditoria e diagnóstico.
 
 ## 🤝 Contribuição
 
-Sugestões de melhoria:
+Sugestões de evolução:
 
 - padronização adicional de tipagem e lint;
-- suíte de testes para fluxos críticos;
+- expansão da suíte de testes de fluxos críticos;
 - documentação de troubleshooting (erros comuns de ambiente e PRWEB).
-
----
 
 ## 📄 Licença
 
-Interna conforme política da empresa.
+Uso interno, conforme política da empresa.
