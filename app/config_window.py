@@ -48,21 +48,24 @@ class ConfigWindow(QWidget):
         descricao_cargas_box = QLabel("Cargas / Box")
         layout.addWidget(descricao_cargas_box)
 
+        descricao_regra_rota = QLabel("Dica: para regra por rota, deixe a Carga em branco e preencha a Rota + Box.")
+        layout.addWidget(descricao_regra_rota)
+
         self.lista_cargas_box = QListWidget()
         self.lista_cargas_box.setSelectionMode(QListWidget.SingleSelection)
         layout.addWidget(self.lista_cargas_box)
 
         add_layout_cargas = QHBoxLayout()
         self.input_carga = QLineEdit()
-        self.input_carga.setPlaceholderText("Ex: JT TRANSPORTES")
+        self.input_carga.setPlaceholderText("Ex: JT TRANSPORTES (opctional se usar só rota)")
 
         self.input_box = QLineEdit()
-        self.input_box.setPlaceholderText("Ex.: 849 (vazio para ignorar)")
+        self.input_box.setPlaceholderText("Ex.: 849")
 
         self.input_rota_carga = QLineEdit()
-        self.input_carga.setPlaceholderText("Ex: JT TRANSPORTES (opcional se usar só rota)")
+        self.input_rota_carga.setPlaceholderText("Ex: 2872 (opcional)")
 
-        self.btn_add_carga_box = QPushButton("Adicionar carga/box")
+        self.btn_add_carga_box = QPushButton("Adicionar regra (carga/rota/box)")
         self.btn_add_carga_box.clicked.connect(self.adicionar_carga_box)
 
         add_layout_cargas.addWidget(self.input_carga)
@@ -121,6 +124,8 @@ class ConfigWindow(QWidget):
         
         carga, resto = item_text.split("=>", 1)
         carga = carga.strip()
+        if carga == "[ROTA]":
+            carga = ""
         resto = resto.strip()
 
         rota = ""
@@ -136,6 +141,9 @@ class ConfigWindow(QWidget):
         return {"carga": carga, "box": box, "rota": rota}
     
     def _format_carga_box_item(self, carga, box, rota=""):
+        if rota and not carga:
+            return f"[ROTA] => {box} | rota: {rota}"
+        
         if rota:
             return f"{carga} => {box} | rota: {rota}"
         
