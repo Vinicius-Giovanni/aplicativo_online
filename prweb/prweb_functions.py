@@ -39,7 +39,8 @@ def emissao_de_carga(page,
                 empresa,
                 matricula,
                 password,
-                data: str):
+                data: str,
+                rotas=None):
     
     """
     Realiza a emissao das cargas
@@ -66,7 +67,7 @@ def emissao_de_carga(page,
     matricula_2 = page.locator("xpath=/html/body/form/table[3]/tbody/tr/td[6]/input[1]")
     matricula_2.type(matricula)
 
-    sp_rotas = _load_sp_rotas_from_config()
+    sp_rotas = rotas if rotas else _load_sp_rotas_from_config()
 
     tabela_geral = []
 
@@ -456,7 +457,8 @@ def boxiamento_carga(page,
                     empresa,
                     matricula,
                     password,
-                    data):
+                    data,
+                    rotas=None):
     """
     Realiza o boxiamento
     """
@@ -484,7 +486,7 @@ def boxiamento_carga(page,
     matricula_2.type(matricula)
     page.wait_for_timeout(500)
 
-    sp_rotas = _load_sp_rotas_from_config()
+    sp_rotas = rotas if rotas else _load_sp_rotas_from_config()
     cargas_box_map = _load_cargas_box_from_config()
 
     tabela_geral = []

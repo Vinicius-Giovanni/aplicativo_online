@@ -16,7 +16,7 @@ class BoxiamentoCarga(QWidget):
         self.empresa = empresa
         self.matricula = matricula
         self.password = password
-        self.pp_config = AppConfig()
+        self.app_config = AppConfig()
 
         self.setup_ui()
 

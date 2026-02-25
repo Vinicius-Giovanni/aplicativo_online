@@ -1,10 +1,12 @@
 from PySide6.QtWidgets import (
     QWidget, QLineEdit, QPushButton, QVBoxLayout,
-    QFormLayout, QMessageBox
+    QFormLayout, QMessageBox, QListWidget, QLabel
 )
 
 from PySide6.QtCore import QThread
 from workers.prweb_worker import PrwebWorker
+from settings.config import AppConfig
+import json
 
 class EmissaoWindow(QWidget):
     def __init__(self, empresa, matricula, password):
@@ -13,6 +15,7 @@ class EmissaoWindow(QWidget):
         self.empresa = empresa
         self.matricula = matricula
         self.password = password
+        self.app_config = AppConfig()
 
         self.setup_ui()
 
@@ -25,12 +28,19 @@ class EmissaoWindow(QWidget):
         self.btn_executar = QPushButton("Executar Emissão")
         self.btn_executar.clicked.connect(self.executar_emissao)
 
+        self.label_rotas = QLabel("Selecione as rotas para emissão:")
+        self.lista_rotas = QListWidget()
+        self.lista_rotas.setSelectionMode(QListWidget.MultiSelection)
+        self.carregar_rotas()
+
         # Layout
         form = QFormLayout()
         form.addRow("Data Entrega:", self.data)
 
         layout = QVBoxLayout()
         layout.addLayout(form)
+        layout.addWidget(self.label_rotas)
+        layout.addWidget(self.lista_rotas)
         layout.addWidget(self.btn_executar)
 
         self.setLayout(layout)
@@ -41,6 +51,11 @@ class EmissaoWindow(QWidget):
             QMessageBox.warning(self, "Campo obrigatório", "A data de entrega deve ser preenchida.")
             return
         
+        rotas_selecionadas = [item.text().strip() for item in self.lista_rotas.selectedItems()]
+        if not rotas_selecionadas:
+            QMessageBox.warning(self, "Campo obrigatório", "Selecione pelo menos uma rota para emissão.")
+            return
+        
         self.btn_executar.setEnabled(False)
 
         params = {
@@ -48,7 +63,8 @@ class EmissaoWindow(QWidget):
             "empresa": self.empresa,
             "matricula": self.matricula,
             "password": self.password,
-            "data": self.data.text()
+            "data": self.data.text(),
+            "rotas": rotas_selecionadas
         }
 
         self.thread = QThread()
@@ -73,3 +89,23 @@ class EmissaoWindow(QWidget):
     def on_error(self, message):
         QMessageBox.critical(self, "Erro", message)
         self.btn_executar.setEnabled(True)
+
+    def carregar_rotas(self):
+        self.lista_rotas.clear()
+
+        try:
+            with open(self.app_config.ROTAS_FILE, "r", encoding='utf-8') as f:
+                data = json.load(f)
+        except FileNotFoundError:
+            self.app_config._ensure_rotas_file()
+            with open(self.app_config.ROTAS_FILE, "r", encoding='utf-8') as f:
+                data = json.load(f)
+        except json.JSONDecodeError:
+            QMessageBox.critical(self, "Erro no JSON", "O arquivo rotas.json está inválido.")
+            return
+        
+        for rota in data.get("sp_rotas", []):
+            self.lista_rotas.addItem(str(rota).strip())
+
+        for i in range(self.lista_rotas.count()):
+            self.lista_rotas.item(i).setSelected(True)
