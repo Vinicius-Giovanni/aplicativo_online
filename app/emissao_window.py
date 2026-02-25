@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (
     QWidget, QLineEdit, QPushButton, QVBoxLayout,
-    QFormLayout, QMessageBox, QListWidget, QLabel
+    QFormLayout, QMessageBox, QListWidget, QLabel, QHBoxLayout
 )
 
 from PySide6.QtCore import QThread
@@ -33,6 +33,12 @@ class EmissaoWindow(QWidget):
         self.lista_rotas.setSelectionMode(QListWidget.MultiSelection)
         self.carregar_rotas()
 
+        self.input_rota_manual = QLineEdit()
+        self.input_rota_manual.setPlaceholderText("Emitir rota fora da lista")
+
+        self.btn_add_rota_manual = QPushButton("Adicionar rota")
+        self.btn_add_rota_manual.clicked.connect(self.adicionar_rota_manual)
+
         # Layout
         form = QFormLayout()
         form.addRow("Data Entrega:", self.data)
@@ -41,6 +47,12 @@ class EmissaoWindow(QWidget):
         layout.addLayout(form)
         layout.addWidget(self.label_rotas)
         layout.addWidget(self.lista_rotas)
+
+        add_rota_layout = QHBoxLayout()
+        add_rota_layout.addWidget(self.input_rota_manual)
+        add_rota_layout.addWidget(self.btn_add_rota_manual)
+        layout.addLayout(add_rota_layout)
+
         layout.addWidget(self.btn_executar)
 
         self.setLayout(layout)
@@ -109,3 +121,23 @@ class EmissaoWindow(QWidget):
 
         for i in range(self.lista_rotas.count()):
             self.lista_rotas.item(i).setSelected(True)
+
+    def adicionar_rota_manual(self):
+        rota = self.input_rota_manual.text().strip()
+        if not rota:
+            QMessageBox.warning(self, "Campo vazio", "Digite uma rota para adicionar.")
+            return
+        
+        rotas_existentes = [
+            self.lista_rotas.item(i).text().strip()
+            for i in range(self.lista_rotas.count())
+        ]
+
+        if rota not in rotas_existentes:
+            self.lista_rotas.addItem(rota)
+
+        for i in range(self.lista_rotas.count()):
+            item = self.lista_rotas.item(i)
+            if item.text().strip() == rota:
+                item.setSelected(True)
+                break

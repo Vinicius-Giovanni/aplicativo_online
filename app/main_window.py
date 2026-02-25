@@ -54,7 +54,7 @@ class MainWindow(QMainWindow):
         PATCH => Correção de bug
         """
 
-        vs = str("2.7.8")
+        vs = str("3.7.10")
 
         topbar = QToolBar()
         topbar.setMovable(False)
@@ -213,11 +213,13 @@ class MainWindow(QMainWindow):
             self.log_dock.show()
     
     def abrir_emissao(self):
+        self.emissao_page.carregar_rotas()
         self.stack.setCurrentIndex(2)
         if self.log_dock:
             self.log_dock.show()
 
     def abrir_boxiamento(self):
+        self.boxiamento_page.carregar_rotas()
         self.stack.setCurrentIndex(3)
         if self.log_dock:
             self.log_dock.show()
