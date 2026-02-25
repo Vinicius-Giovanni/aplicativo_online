@@ -90,7 +90,7 @@ class BoxiamentoCarga(QWidget):
         self.worker.finished.connect(self.worker.deleteLater)
         self.thread.finished.connect(self.thread.deleteLater)
 
-        self.worker.finished.connect(self.on_finished)
+        self.worker.succeeded.connect(self.on_finished)
         self.worker.error.connect(self.on_error)
         
         self.thread.start()
