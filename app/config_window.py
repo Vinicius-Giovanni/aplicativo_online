@@ -48,22 +48,29 @@ class ConfigWindow(QWidget):
         descricao_cargas_box = QLabel("Cargas / Box")
         layout.addWidget(descricao_cargas_box)
 
+        descricao_regra_rota = QLabel("Dica: para regra por rota, deixe a Carga em branco e preencha a Rota + Box.")
+        layout.addWidget(descricao_regra_rota)
+
         self.lista_cargas_box = QListWidget()
         self.lista_cargas_box.setSelectionMode(QListWidget.SingleSelection)
         layout.addWidget(self.lista_cargas_box)
 
         add_layout_cargas = QHBoxLayout()
         self.input_carga = QLineEdit()
-        self.input_carga.setPlaceholderText("Ex: JT TRANSPORTES")
+        self.input_carga.setPlaceholderText("Ex: JT TRANSPORTES (opctional se usar só rota)")
 
         self.input_box = QLineEdit()
-        self.input_box.setPlaceholderText("Ex.: 849 (vazio para ignorar)")
+        self.input_box.setPlaceholderText("Ex.: 849")
 
-        self.btn_add_carga_box = QPushButton("Adicionar carga/box")
+        self.input_rota_carga = QLineEdit()
+        self.input_rota_carga.setPlaceholderText("Ex: 2872 (opcional)")
+
+        self.btn_add_carga_box = QPushButton("Adicionar regra (carga/rota/box)")
         self.btn_add_carga_box.clicked.connect(self.adicionar_carga_box)
 
         add_layout_cargas.addWidget(self.input_carga)
         add_layout_cargas.addWidget(self.input_box)
+        add_layout_cargas.addWidget(self.input_rota_carga)
         add_layout_cargas.addWidget(self.btn_add_carga_box)
         layout.addLayout(add_layout_cargas)
 
@@ -111,6 +118,37 @@ class ConfigWindow(QWidget):
         for rota in data.get("sp_rotas", []):
             self.lista_rotas.addItem(str(rota).strip())
 
+    def _parse_carga_box_item(self, item_text):
+        if "=>" not in item_text:
+            return None
+        
+        carga, resto = item_text.split("=>", 1)
+        carga = carga.strip()
+        if carga == "[ROTA]":
+            carga = ""
+        resto = resto.strip()
+
+        rota = ""
+        box = resto
+
+        if "|" in resto:
+            box_part, rota_part = resto.split("|", 1)
+            box = box_part.strip()
+            rota_part = rota_part.strip()
+            if rota_part.lower().startswith("rota:"):
+                rota = rota_part.split(":", 1)[1].strip()
+
+        return {"carga": carga, "box": box, "rota": rota}
+    
+    def _format_carga_box_item(self, carga, box, rota=""):
+        if rota and not carga:
+            return f"[ROTA] => {box} | rota: {rota}"
+        
+        if rota:
+            return f"{carga} => {box} | rota: {rota}"
+        
+        return f"{carga} => {box}"
+
     def carregar_cargas_box(self):
         self.lista_cargas_box.clear()
 
@@ -127,8 +165,27 @@ class ConfigWindow(QWidget):
             QMessageBox.critical(self, "Erro no JSON", "O arquivo carga_box.json está inválido.")
             return
         
-        for carga, box in data.items():
-            self.lista_cargas_box.addItem(f"{str(carga).strip()} => {str(box).strip()}")
+        if isinstance(data, dict):
+            for carga, box in data.items():
+                self.lista_cargas_box.addItem(self._format_carga_box_item(str(carga).strip(), str(box).strip(), ""))
+            return
+
+        if isinstance(data, list):
+            for item in data:
+                if not isinstance(item, dict):
+                    continue
+
+                carga = str(item.get("carga", "")).strip()
+                box = str(item.get("box", "")).strip()
+                rota = str(item.get("rota", "")).strip()
+
+                if not box:
+                    continue
+
+                if not carga and not rota:
+                    continue
+
+                self.lista_cargas_box.addItem(self._format_carga_box_item(carga, box, rota))
 
     def adicionar_rota(self):
         rota = self.input_rota.text().strip()
@@ -148,21 +205,32 @@ class ConfigWindow(QWidget):
     def adicionar_carga_box(self):
         carga = self.input_carga.text().strip()
         box = self.input_box.text().strip()
+        rota = self.input_rota_carga.text().strip()
 
-        if not carga:
-            QMessageBox.warning(self, "Campo vazio", "Digite uma transportadora para adicionar.")
+        if not rota and not carga:
+            QMessageBox.warning(self, "Campo vazio", "Digite uma transportadora ou uma rota para adicionar.")
+            return
+
+        if not box:
+            QMessageBox.warning(self, "Campo vazio", "Digite um box para a regra de boxiamento.")
             return
         
         for i in range(self.lista_cargas_box.count()):
             item = self.lista_cargas_box.item(i).text()
-            nome_existente = item.split("=>", 1)[0].strip()
-            if nome_existente == carga:
-                QMessageBox.information(self, "Transportadora duplicada", "Essa transportadora já está cadastrada.")
+            parsed = self._parse_carga_box_item(item)
+            if not parsed:
+                continue
+
+            nome_existente = parsed["carga"]
+            rota_existente = parsed["rota"]
+            if nome_existente == carga and rota_existente == rota:
+                QMessageBox.information(self, "Transportadora duplicada", "Essa regra de transportadora/rota já está cadastrada.")
                 return
 
-        self.lista_cargas_box.addItem(f"{carga} => {box}")
+        self.lista_cargas_box.addItem(self._format_carga_box_item(carga, box, rota))
         self.input_carga.clear()
         self.input_box.clear()
+        self.input_rota_carga.clear()
 
     def remover_item_selecionado(self):
         item_rota = self.lista_rotas.currentItem()
@@ -181,19 +249,23 @@ class ConfigWindow(QWidget):
     def salvar_configuracoes(self):
         rotas = [self.lista_rotas.item(i).text().strip() for i in range(self.lista_rotas.count())]
 
-        cargas_box = {}
+        cargas_box = []
         for i in range(self.lista_cargas_box.count()):
             item_text = self.lista_cargas_box.item(i).text()
-            if "=>" not in item_text:
+            parsed = self._parse_carga_box_item(item_text)
+            if not parsed:
                 continue
-            carga, box = item_text.split("=>", 1)
-            
-            carga = carga.strip()
-            box = box.strip()
-            if not carga:
+            carga = parsed["carga"]
+            box = parsed["box"]
+            rota = parsed["rota"]
+
+            if not box:
+                continue
+
+            if not carga and not rota:
                 continue
             
-            cargas_box[carga] = box
+            cargas_box.append({"carga": carga, "box": box, "rota": rota})
 
         try:
             with open(self.app_config.ROTAS_FILE, "w", encoding="utf-8") as f:

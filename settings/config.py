@@ -15,22 +15,26 @@ class AppConfig:
         "2923", "2925", "2937", "2938",
         ]
     
-    DEFAULT_CARGAS_BOX = {
-        "JT TRANSPORTES": "849",
-        "CARRIERS": "",
-        "ANJUN": "848",
-        "PACIFICO": "843",
-        "BRASIL WEB": "847",
-        "LOGAN": "842",
-        "VENKON": "844",
-        "SEDEX": "850",
-        "L MEGA 1200>1624": "840",
-        "L MEGA 1200>1475": "871",
-        "L MEGA 1200>1500": "872",
-        "L MEGA 1200>1760": "871",
-        "TRILOG": "839",
-        "ASAP LOG": "870"
-    }
+    DEFAULT_CARGAS_BOX = [
+        {"carga": "", "box": "840", "rota": "2872"},
+        {"carga": "", "box": "871", "rota": "2875"},
+        {"carga": "", "box": "872", "rota": "2874"},
+        {"carga": "", "box": "871", "rota": "2873"},
+        {"carga": "L MEGA 1200>1624", "box": "840", "rota": "2872"},
+        {"carga": "L MEGA 1200>1475", "box": "871", "rota": "2875"},
+        {"carga": "L MEGA 1200>1500", "box": "872", "rota": "2874"},
+        {"carga": "L MEGA 1200>1760", "box": "871", "rota": "2873"},
+        {"carga": "JT TRANSPORTES", "box": "849", "rota": ""},
+        {"carga": "CARRIERS", "box": "", "rota": ""},
+        {"carga": "ANJUN", "box": "848", "rota": ""},
+        {"carga": "PACIFICO", "box": "843", "rota": ""},
+        {"carga": "BRASIL WEB", "box": "847", "rota": ""},
+        {"carga": "LOGAN", "box": "842", "rota": ""},
+        {"carga": "VENKON", "box": "844", "rota": ""},
+        {"carga": "SEDEX", "box": "850", "rota": ""},
+        {"carga": "TRILOG", "box": "839", "rota": ""},
+        {"carga": "ASAP LOG", "box": "870", "rota": ""}
+    ]
 
     def __init__(self, theme_source_path: Path | None = None):
         self.CONFIG_ROTA = self._CREATE_CONFIG_DIRECTORY()

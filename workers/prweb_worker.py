@@ -10,6 +10,7 @@ from prweb.prweb_functions import (
 
 class PrwebWorker(QObject):
     finished = Signal()
+    succeeded = Signal()
     error = Signal(str)
 
     def __init__(self, params: dict):
@@ -66,10 +67,12 @@ class PrwebWorker(QObject):
                     matricula=self.params["matricula"],
                     password=self.params["password"],
                     data=self.params["data"],
-                    rotas=self.params.get["rotas"]
+                    rotas=self.params.get("rotas")
                 )
             else:
                 raise ValueError("Ação não reconhecida, verifique o módulo prweb_worker")
+            
+            self.succeeded.emit()
 
         except Exception as e:
             self.error.emit(str(e))

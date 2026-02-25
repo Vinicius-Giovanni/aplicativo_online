@@ -18,6 +18,7 @@ from app.boxiamento_de_carga import BoxiamentoCarga
 from app.log_window import LogWindow
 from app.config_window import ConfigWindow
 from app.log_export_window import LogExportWindow
+from app.duvidas_window import DuvidasWindow
 
 class MainWindow(QMainWindow):
 
@@ -54,7 +55,7 @@ class MainWindow(QMainWindow):
         PATCH => Correção de bug
         """
 
-        vs = str("3.7.10")
+        vs = str("3.7.11")
 
         topbar = QToolBar()
         topbar.setMovable(False)
@@ -103,6 +104,10 @@ class MainWindow(QMainWindow):
         btn_export_logs = QPushButton("💾 Exportar Registro")
         btn_export_logs.clicked.connect(self.abrir_exportacao_logs)
 
+        # dúvidas
+        btn_duvidas = QPushButton("❓ Dúvidas")
+        btn_duvidas.clicked.connect(self.abrir_duvidas)
+
         # logout
         btn_logout = QPushButton("Sair")
         btn_logout.clicked.connect(self.logout)
@@ -119,6 +124,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(btn_boxiamento)
         layout.addWidget(btn_configuracoes)
         layout.addWidget(btn_export_logs)
+        layout.addWidget(btn_duvidas)
         layout.addStretch()
         layout.addWidget(btn_logs)
         layout.addWidget(btn_logout)
@@ -174,6 +180,7 @@ class MainWindow(QMainWindow):
 
         self.config_page = ConfigWindow()
         self.log_export_page = LogExportWindow()
+        self.duvidas_page = DuvidasWindow()
 
         self.stack.addWidget(home)
         self.stack.addWidget(self.filter_page)
@@ -181,6 +188,7 @@ class MainWindow(QMainWindow):
         self.stack.addWidget(self.boxiamento_page)
         self.stack.addWidget(self.config_page)
         self.stack.addWidget(self.log_export_page)
+        self.stack.addWidget(self.duvidas_page)
         self.setCentralWidget(self.stack)
     
     # dock
@@ -232,6 +240,11 @@ class MainWindow(QMainWindow):
 
     def abrir_exportacao_logs(self):
         self.stack.setCurrentIndex(5)
+        if self.log_dock:
+            self.log_dock.show()
+
+    def abrir_duvidas(self):
+        self.stack.setCurrentIndex(6)
         if self.log_dock:
             self.log_dock.show()
 
