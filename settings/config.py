@@ -16,10 +16,10 @@ class AppConfig:
         ]
     
     DEFAULT_CARGAS_BOX = [
-        {"carga": "L MEGA 1200>1624", "box": "840", "rota": "2872"},
-        {"carga": "L MEGA 1200>1475", "box": "871", "rota": "2875"},
-        {"carga": "L MEGA 1200>1500", "box": "872", "rota": "2874"},
-        {"carga": "L MEGA 1200>1760", "box": "871", "rota": "2873"},
+        {"carga": "", "box": "840", "rota": "2872"},
+        {"carga": "", "box": "871", "rota": "2875"},
+        {"carga": "", "box": "872", "rota": "2874"},
+        {"carga": "", "box": "871", "rota": "2873"},
         {"carga": "JT TRANSPORTES", "box": "849", "rota": ""},
         {"carga": "CARRIERS", "box": "", "rota": ""},
         {"carga": "ANJUN", "box": "848", "rota": ""},

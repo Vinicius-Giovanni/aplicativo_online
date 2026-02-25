@@ -29,7 +29,10 @@ def _normalize_cargas_box(cargas_box_data):
             box = str(item.get("box", "")).strip()
             rota = str(item.get("rota", "")).strip()
 
-            if not carga:
+            if not box:
+                continue
+
+            if not carga and not rota:
                 continue
 
             normalized.append({"carga": carga, "box": box, "rota": rota})
@@ -47,6 +50,76 @@ def _normalize_cargas_box(cargas_box_data):
 
     return normalized
 
+def _normalize_text_for_match(value):
+    normalized = str(value or "").upper().strip()
+    normalized = re.sub(r"\s+", " ", normalized)
+    normalized = re.sub(r"\s*>\s*", ">", normalized)
+    normalized = re.sub(r"\s*-\s*", "-", normalized)
+    return normalized
+
+def _resolve_box_for_carga(cargas_box_map, rota_atual, contrato, transportadora):
+    """
+    Resolve o box com suporte a regra somente por rota.
+
+    Ordem de prioridade:
+    1) Regras com rota igual à rota atual e carga vazia (ignora contrato/transportadora)
+    2) Regras com rota igual à rota atual + match em contrato
+    3) Regras com rota igual à rota atual + match em transportadora
+    4) Regras sem rota + match em contrato
+    5) Regras sem rota + match em transportadora
+    """
+
+    rota_atual = str(rota_atual).strip()
+    contrato_norm = _normalize_text_for_match(contrato)
+    transportadora_norm = _normalize_text_for_match(transportadora)
+
+    regras_somente_rota = []
+    regras_com_rota = []
+    regras_sem_rota = []
+
+    for regra in cargas_box_map:
+        carga_regra = str(regra.get("carga", "")).strip()
+        box_regra = str(regra.get("box", "")).strip()
+        rota_regra = str(regra.get("rota", "")).strip()
+
+        if not box_regra:
+            continue
+
+        carga_regra_norm = _normalize_text_for_match(carga_regra)
+
+        if rota_regra:
+            if rota_regra != rota_atual:
+                continue
+
+            if not carga_regra_norm:
+                regras_somente_rota.append(box_regra)
+            else:
+                regras_com_rota.append((carga_regra_norm, box_regra))
+            continue
+
+        if carga_regra_norm:
+            regras_sem_rota.append((carga_regra_norm, box_regra))
+
+    if regras_somente_rota:
+        return regras_somente_rota[0]
+
+    for carga_regra_norm, box_regra in regras_com_rota:
+        if carga_regra_norm in contrato_norm:
+            return box_regra
+
+    for carga_regra_norm, box_regra in regras_com_rota:
+        if carga_regra_norm in transportadora_norm:
+            return box_regra
+
+    for carga_regra_norm, box_regra in regras_sem_rota:
+        if carga_regra_norm in contrato_norm:
+            return box_regra
+
+    for carga_regra_norm, box_regra in regras_sem_rota:
+        if carga_regra_norm in transportadora_norm:
+            return box_regra
+
+    return ""
 
 def _load_cargas_box_from_config():
     app_config = AppConfig()
@@ -661,25 +734,18 @@ def boxiamento_carga(page,
                             if estado_checkbox_antes == "checked": # <<< Checkbox estiver desmarcado
                                 xpath_checkbox_emite.click() # <<< Desmarca checkbox
 
-                        # Boxiamento levando em considerações a rota inserida
-
-                        for regra in cargas_box_map:
-                            carga_regra = regra["carga"]
-                            box_regra = regra["box"]
-                            rota_regra = regra["rota"]
-
-                            if box_regra == "":
-                                continue
-                            
-
-                            if rota_regra and rota_regra != str(rota).strip():
-                                continue
-
-                            if carga_regra in xpath_contrato or carga_regra in xpath_transportadora:
-                                xpath_valor_box.clear()
-                                box = box_regra
-                                xpath_valor_box.type(box)
-                                break
+                        # Boxiamento priorizando regras com rota e match em contrato
+                        box_resolvido = _resolve_box_for_carga(
+                            cargas_box_map=cargas_box_map,
+                            rota_atual=rota,
+                            contrato=xpath_contrato,
+                            transportadora=xpath_transportadora,
+                        )
+                        
+                        if box_resolvido:
+                            xpath_valor_box.clear()
+                            box = box_resolvido
+                            xpath_valor_box.type(box)
 
                     # ============== Tabela ==============
 

@@ -60,7 +60,7 @@ class ConfigWindow(QWidget):
         self.input_box.setPlaceholderText("Ex.: 849 (vazio para ignorar)")
 
         self.input_rota_carga = QLineEdit()
-        self.input_rota_carga.setPlaceholderText("Ex: 2872 (opcional)")
+        self.input_carga.setPlaceholderText("Ex: JT TRANSPORTES (opcional se usar só rota)")
 
         self.btn_add_carga_box = QPushButton("Adicionar carga/box")
         self.btn_add_carga_box.clicked.connect(self.adicionar_carga_box)
@@ -171,7 +171,10 @@ class ConfigWindow(QWidget):
                 box = str(item.get("box", "")).strip()
                 rota = str(item.get("rota", "")).strip()
 
-                if not carga:
+                if not box:
+                    continue
+
+                if not carga and not rota:
                     continue
 
                 self.lista_cargas_box.addItem(self._format_carga_box_item(carga, box, rota))
@@ -196,8 +199,12 @@ class ConfigWindow(QWidget):
         box = self.input_box.text().strip()
         rota = self.input_rota_carga.text().strip()
 
-        if not carga:
-            QMessageBox.warning(self, "Campo vazio", "Digite uma transportadora para adicionar.")
+        if not rota and not carga:
+            QMessageBox.warning(self, "Campo vazio", "Digite uma transportadora ou uma rota para adicionar.")
+            return
+
+        if not box:
+            QMessageBox.warning(self, "Campo vazio", "Digite um box para a regra de boxiamento.")
             return
         
         for i in range(self.lista_cargas_box.count()):
@@ -210,6 +217,7 @@ class ConfigWindow(QWidget):
             rota_existente = parsed["rota"]
             if nome_existente == carga and rota_existente == rota:
                 QMessageBox.information(self, "Transportadora duplicada", "Essa regra de transportadora/rota já está cadastrada.")
+                return
 
         self.lista_cargas_box.addItem(self._format_carga_box_item(carga, box, rota))
         self.input_carga.clear()
@@ -243,7 +251,10 @@ class ConfigWindow(QWidget):
             box = parsed["box"]
             rota = parsed["rota"]
 
-            if not carga:
+            if not box:
+                continue
+
+            if not carga and not rota:
                 continue
             
             cargas_box.append({"carga": carga, "box": box, "rota": rota})
