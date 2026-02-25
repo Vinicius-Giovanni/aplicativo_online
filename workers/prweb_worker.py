@@ -55,7 +55,8 @@ class PrwebWorker(QObject):
                     empresa=self.params["empresa"],
                     matricula=self.params["matricula"],
                     password=self.params["password"],
-                    data=self.params["data"]
+                    data=self.params["data"],
+                    rotas=self.params.get("rotas")
                 )
                 
             elif action == "boxiamento":
@@ -64,7 +65,8 @@ class PrwebWorker(QObject):
                     empresa=self.params["empresa"],
                     matricula=self.params["matricula"],
                     password=self.params["password"],
-                    data=self.params["data"]
+                    data=self.params["data"],
+                    rotas=self.params.get["rotas"]
                 )
             else:
                 raise ValueError("Ação não reconhecida, verifique o módulo prweb_worker")
