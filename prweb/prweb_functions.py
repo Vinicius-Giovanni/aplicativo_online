@@ -18,13 +18,43 @@ def _load_sp_rotas_from_config():
 
     return rotas_data.get("sp_rotas", [])
 
+def _normalize_cargas_box(cargas_box_data):
+    if isinstance(cargas_box_data, list):
+        normalized = []
+        for item in cargas_box_data:
+            if not isinstance(item, dict):
+                continue
+
+            carga = str(item.get("carga", "")).strip()
+            box = str(item.get("box", "")).strip()
+            rota = str(item.get("rota", "")).strip()
+
+            if not carga:
+                continue
+
+            normalized.append({"carga": carga, "box": box, "rota": rota})
+
+        return normalized
+
+    normalized = []
+    if isinstance(cargas_box_data, dict):
+        for carga, box in cargas_box_data.items():
+            carga = str(carga).strip()
+            if not carga:
+                continue
+
+            normalized.append({"carga": carga, "box": str(box).strip(), "rota": ""})
+
+    return normalized
+
+
 def _load_cargas_box_from_config():
     app_config = AppConfig()
 
     with open(app_config.CARGAS_BOX_FILE, 'r', encoding='utf-8') as f:
         cargas_box_data = json.load(f)
 
-    return cargas_box_data
+    return _normalize_cargas_box(cargas_box_data)
 
 def start_browser():
     """
@@ -633,20 +663,23 @@ def boxiamento_carga(page,
 
                         # Boxiamento levando em considerações a rota inserida
 
-                        for carga, _box in cargas_box_map.items():
+                        for regra in cargas_box_map:
+                            carga_regra = regra["carga"]
+                            box_regra = regra["box"]
+                            rota_regra = regra["rota"]
 
-                            if _box == "":
+                            if box_regra == "":
                                 continue
                             
-                            elif carga in xpath_contrato:
+
+                            if rota_regra and rota_regra != str(rota).strip():
+                                continue
+
+                            if carga_regra in xpath_contrato or carga_regra in xpath_transportadora:
                                 xpath_valor_box.clear()
-                                box = _box
+                                box = box_regra
                                 xpath_valor_box.type(box)
-                            
-                            elif carga in xpath_transportadora:
-                                xpath_valor_box.clear()
-                                box = _box
-                                xpath_valor_box.type(box)
+                                break
 
                     # ============== Tabela ==============
 
