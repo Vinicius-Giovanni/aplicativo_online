@@ -55,7 +55,7 @@ class MainWindow(QMainWindow):
         PATCH => Correção de bug
         """
 
-        vs = str("3.7.10")
+        vs = str("3.7.11")
 
         topbar = QToolBar()
         topbar.setMovable(False)
