@@ -63,7 +63,7 @@ class LogExportWindow(QWidget):
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
                     payload = json.load(f)
-            except (OSError. json.JSONDecodeError):
+            except (OSError, json.JSONDecodeError):
                 payload = {"data": data, "logs": []}
         
         logs = payload.get("logs", [])
@@ -106,7 +106,7 @@ class LogExportWindow(QWidget):
         item_data.setExpanded(False)
 
         for log in logs:
-            item_log = QTreeWidgetItem([logs])
+            item_log = QTreeWidgetItem([log])
             item_data.addChild(item_log)
 
         self.history_tree.addTopLevelItem(item_data)
