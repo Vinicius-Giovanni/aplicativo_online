@@ -20,7 +20,7 @@ class LoginWindow(QWidget):
 
     def setup_ui(self):
         self.input_empresa = QLineEdit(maxLength=2)
-        self.input_empresa.setPlaceholderText("Ex.: 01")
+        self.input_empresa.setPlaceholderText("Ex.: 29 ou 21")
 
         self.input_matricula = QLineEdit(maxLength=8)
         self.input_matricula.setPlaceholderText("Sua matrícula")
@@ -53,7 +53,7 @@ class LoginWindow(QWidget):
 
         card_layout.addWidget(title)
         card_layout.addWidget(subtitle)
-        card_layout.addWidget(form_layout)
+        card_layout.addLayout(form_layout)
         card_layout.addWidget(self.btn_login)
         card.setLayout(card_layout)
 
