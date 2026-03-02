@@ -164,7 +164,7 @@ QFrame#Sidebar {
     background: qlineargradient(
         x1: 0, y1: 0,
         x2: 0, y2: 1,
-        stop: 0 # #171A34,
+        stop: 0 #171A34,
         stop: 1 #10132A
     );
     border-right: 1px solid #2A2F56;
