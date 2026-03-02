@@ -31,6 +31,7 @@ class ConfigWindow(QWidget):
 
         self.lista_rotas = QListWidget()
         self.lista_rotas.setSelectionMode(QListWidget.SingleSelection)
+        self.lista_rotas.itemSelectionChanged.connect(self._on_rota_selection_changed)
         layout.addWidget(self.lista_rotas)
 
         add_layout_rotas = QHBoxLayout()
@@ -53,6 +54,7 @@ class ConfigWindow(QWidget):
 
         self.lista_cargas_box = QListWidget()
         self.lista_cargas_box.setSelectionMode(QListWidget.SingleSelection)
+        self.lista_cargas_box.itemSelectionChanged.connect(self._on_carga_box_selection_changed)
         layout.addWidget(self.lista_cargas_box)
 
         add_layout_cargas = QHBoxLayout()
@@ -95,6 +97,16 @@ class ConfigWindow(QWidget):
         layout.addLayout(actions_layout)
 
         self.setLayout(layout)
+
+    def _on_rota_selection_changed(self):
+        if self.lista_rotas.currentItem() is None:
+            return
+        self.lista_cargas_box.clearSelection()
+
+    def _on_carga_box_selection_changed(self):
+        if self.lista_cargas_box.currentItem() is None:
+            return
+        self.lista_rotas.clearSelection()
 
     def carregar_configuracoes(self):
         self.carregar_rotas()
