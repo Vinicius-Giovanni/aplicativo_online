@@ -101,7 +101,7 @@ class MainWindow(QMainWindow):
         btn_configuracoes.clicked.connect(self.abrir_configuracoes)
 
         # export log
-        btn_export_logs = QPushButton("💾 Exportar Registro")
+        btn_export_logs = QPushButton("🗂️ Histórico de Programação")
         btn_export_logs.clicked.connect(self.abrir_exportacao_logs)
 
         # dúvidas
