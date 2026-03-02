@@ -37,10 +37,6 @@ class LoginWindow(QWidget):
 
         top_bar_frame = QFrame(self)
         top_bar_frame.setFixedHeight(110)
-        top_bar_frame.setStyleSheet("""
-            background-color: rgba(9, 54, 102, 0.70);
-            border: none;
-        """)
         top_bar_frame.setObjectName("LoginTopBar")
         top_bar_layout = QHBoxLayout(top_bar_frame)
         top_bar_layout.setContentsMargins(20, 10, 20, 10)
@@ -50,10 +46,9 @@ class LoginWindow(QWidget):
 
         menu_layout = QHBoxLayout()
         menu_layout.setSpacing(18)
-        for text in ['About Us']:
-            item = QLabel(text)
-            item.setObjectName("TopMenu")
-            menu_layout.addWidget(item)
+        item = QLabel('About Us')
+        item.setObjectName("TopMenu")
+        menu_layout.addWidget(item)
 
         top_bar_layout.addWidget(brand)
         top_bar_layout.addStretch()

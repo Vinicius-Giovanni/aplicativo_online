@@ -15,7 +15,7 @@ QWidget#LoginWindow {
 }
 
 QLabel#BackgroundImage {
-    border-radius: 16px;
+    border-radius: none;
 }
 
 QFrame#LoginCard {
@@ -27,9 +27,9 @@ QFrame#LoginCard {
 }
 
 QLabel#BrandLabel {
-    font-size: 26px;
+    font-size: 38px;
     font-weight: 700;
-    color:rgba(255, 255, 255, 0.95);
+    color:rgba(255, 255, 255, 1);
 }
 
 QFrame#LoginTopBar {
@@ -38,7 +38,7 @@ QFrame#LoginTopBar {
 }
 
 QLabel#TopMenu {
-    background: transparent;
+    background-color: transparent;
 }
 
 QFrame#InputRow {
