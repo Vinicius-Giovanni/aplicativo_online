@@ -60,7 +60,7 @@ class ConfigWindow(QWidget):
         self.input_carga.setPlaceholderText("Ex: JT TRANSPORTES (opctional se usar só rota)")
 
         self.input_box = QLineEdit()
-        self.input_box.setPlaceholderText("Ex.: 849")
+        self.input_box.setPlaceholderText("Ex.: 849 (opcional)")
 
         self.input_rota_carga = QLineEdit()
         self.input_rota_carga.setPlaceholderText("Ex: 2872 (opcional)")
@@ -179,9 +179,6 @@ class ConfigWindow(QWidget):
                 box = str(item.get("box", "")).strip()
                 rota = str(item.get("rota", "")).strip()
 
-                if not box:
-                    continue
-
                 if not carga and not rota:
                     continue
 
@@ -207,13 +204,10 @@ class ConfigWindow(QWidget):
         box = self.input_box.text().strip()
         rota = self.input_rota_carga.text().strip()
 
-        if not rota and not carga:
-            QMessageBox.warning(self, "Campo vazio", "Digite uma transportadora ou uma rota para adicionar.")
+        if not rota and not carga and not box:
+            QMessageBox.warning(self, "Campo vazio", "Digite ao menos transportadora, box ou rota para adicionar.")
             return
 
-        if not box:
-            QMessageBox.warning(self, "Campo vazio", "Digite um box para a regra de boxiamento.")
-            return
         
         for i in range(self.lista_cargas_box.count()):
             item = self.lista_cargas_box.item(i).text()
@@ -258,9 +252,6 @@ class ConfigWindow(QWidget):
             carga = parsed["carga"]
             box = parsed["box"]
             rota = parsed["rota"]
-
-            if not box:
-                continue
 
             if not carga and not rota:
                 continue
