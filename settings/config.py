@@ -74,12 +74,8 @@ class AppConfig:
 
     def _ensure_dark_theme_file(self):
         """
-        Cria o dark_theme.qss na pasta local se ele não existir,
-        copiando o conteúdo do arquivo padrão do projeto.
+        Garante que o dark_theme.qss local exista e esteja sincronizado com o arquivo padrão do projeto.
         """
-
-        if self.DARK_THEME_FILE.exists():
-            return
         
         if not self.theme_source_path or not self.theme_source_path.exists():
             logger.warning("Arquivo dark_theme.qss padrão não encontrado pela cópia.")
@@ -87,6 +83,15 @@ class AppConfig:
         
         with open(self.theme_source_path, "r", encoding='utf-8') as source_file:
             theme_content = source_file.read()
+
+        if self.DARK_THEME_FILE.exists():
+            with open(self.DARK_THEME_FILE, "r", encoding="utf-8") as target_file:
+                current_content = target_file.read()
+            
+            if current_content == theme_content:
+                return
+            
+            logger.info("Atualizando dark_theme.qss local com a versão mais recente do projeto.")
         
         with open(self.DARK_THEME_FILE, "w", encoding='utf-8') as target_file:
             target_file.write(theme_content)

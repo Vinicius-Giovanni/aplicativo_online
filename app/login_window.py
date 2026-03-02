@@ -5,7 +5,7 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtGui import QResizeEvent
 from PySide6.QtWidgets import (
     QWidget, QLineEdit, QPushButton,
-    QVBoxLayout, QHBoxLayout, QMessageBox, QLabel, QFrame
+    QVBoxLayout, QHBoxLayout, QMessageBox, QLabel, QFrame, QSizePolicy
 )
 
 from log.qt_handler import QtLogHandler
@@ -39,13 +39,19 @@ class LoginWindow(QWidget):
         top_bar_layout = QHBoxLayout(top_bar_frame)
         top_bar_layout.setContentsMargins(20, 10, 20, 10)
 
-        brand = QLabel("♜ Online")
+        brand = QLabel("♜ RPA - Boxiamento de Cargas Online")
         brand.setObjectName("BrandLabel")
 
         menu_layout = QHBoxLayout()
         menu_layout.setSpacing(18)
+
         item = QLabel('About Us')
         item.setObjectName("TopMenu")
+        item.setAttribute(Qt.WA_StyledBackground, True)
+
+        item.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        item.setFixedHeight(32)
+
         menu_layout.addWidget(item)
 
         top_bar_layout.addWidget(brand)
@@ -58,7 +64,7 @@ class LoginWindow(QWidget):
         form_area.setSpacing(16)
 
         self.input_empresa = QLineEdit(maxLength=2)
-        self.input_empresa.setPlaceholderText("29 or 21")
+        self.input_empresa.setPlaceholderText("29 ou 21")
 
         self.input_matricula = QLineEdit(maxLength=8)
         self.input_matricula.setPlaceholderText("Matrícula")
@@ -67,7 +73,7 @@ class LoginWindow(QWidget):
         self.input_password.setPlaceholderText("Password")
         self.input_password.setEchoMode(QLineEdit.Password)
 
-        self.btn_login = QPushButton("Entrar")
+        self.btn_login = QPushButton("ENTRAR")
         self.btn_login.setObjectName("PrimaryButton")
         self.btn_login.clicked.connect(self.logar)
 
@@ -97,9 +103,6 @@ class LoginWindow(QWidget):
 
         footer = QHBoxLayout()
         footer.setContentsMargins(32, 0, 32, 18)
-        footer.addWidget(QLabel("About Us"))
-        footer.addWidget(QLabel("Privacy Policy"))
-        footer.addWidget(QLabel("Terms Of Use"))
         footer.addStretch()
         footer.addWidget(QLabel("© 2021 Key. All Rights Reserved | Design By Vinicíus Giovanni"))
 

@@ -21,15 +21,15 @@ QLabel#BackgroundImage {
 }
 
 QFrame#LoginCard {
-    background: rgba(10, 16, 35, 0.30);
-    border: 1px solid rgba(255, 255, 255, 0.20);
+    background: transparent;
+    border: none;
     border-radius: 22px;
     min-width: 560px;
     max-width: 560px;
 }
 
 QLabel#BrandLabel {
-    font-size: 38px;
+    font-size: 24px;
     font-weight: 700;
     color:rgba(255, 255, 255, 1);
 }
@@ -42,12 +42,22 @@ QFrame#LoginTopBar {
 }
 
 QLabel#TopMenu {
+    background: transparent;
+    padding: 6px 12px;
+    border-radius: 10px;
+}
+
+QLabel#TopMenu:hover {
+    background: rgba(255, 255, 255, 0.20);
+}
+
+QLabel#TopMenu {
     background-color: transparent;
 }
 
 QFrame#InputRow {
-    background-color: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.28);
+    background-color: rgba(255, 255, 255, 0.20);
+    border: none;
     border-radius: 18px;
     min-height: 48px;
 }
@@ -102,17 +112,17 @@ QPushButton:pressed {
 }
 
 QPushButton#PrimaryButton {
-    background: rgba(122, 8, 17, 0.95);
-    border: 1px solid rgba(160, 20, 28, 0.95);
+    background: #AE796D;
+    border: none;
     min-height: 48px;
-    border-radius: 18px;
+    border-radius: 34px;
     font-size: 19px;
     letter-spacing: 1px;
 }
 
 
 QPushButton#PrimaryButton:hover {
-    background: rgba(146, 14, 24, 0.95);
+    background: #1D07E5;
 }
 
 QComboBox,
