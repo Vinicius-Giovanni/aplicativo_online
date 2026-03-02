@@ -12,6 +12,8 @@ QMainWindow, QDialog {
 
 QWidget#LoginWindow {
     background: transparent;
+    min-width: 1024px;
+    min-height: 640;
 }
 
 QLabel#BackgroundImage {
@@ -35,6 +37,8 @@ QLabel#BrandLabel {
 QFrame#LoginTopBar {
     background-color: rgba(9, 54, 102, 0.70);
     border: none;
+    min-height: 110px;
+    max-height: 110px;
 }
 
 QLabel#TopMenu {
@@ -161,6 +165,8 @@ QCheckBox::indicator:checked {
 }
 
 QFrame#Sidebar {
+    min-width: 200px;
+    max-width: 200px;
     background: qlineargradient(
         x1: 0, y1: 0,
         x2: 0, y2: 1,

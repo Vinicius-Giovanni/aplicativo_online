@@ -17,7 +17,6 @@ class LoginWindow(QWidget):
         super().__init__()
         self.setObjectName("LoginWindow")
         self.setWindowTitle("RPA - Boxiamento Online")
-        self.setMinimumSize(1024, 640)
 
         self.background_path = Path(__file__).resolve().parent / 'assets' / 'images' / 'fundo_teste.png'
         self.background_label = None
@@ -36,7 +35,6 @@ class LoginWindow(QWidget):
         root_layout.setSpacing(12)
 
         top_bar_frame = QFrame(self)
-        top_bar_frame.setFixedHeight(110)
         top_bar_frame.setObjectName("LoginTopBar")
         top_bar_layout = QHBoxLayout(top_bar_frame)
         top_bar_layout.setContentsMargins(20, 10, 20, 10)
