@@ -37,16 +37,12 @@ QFrame#LoginTopBar {
     border: none;
 }
 
-QLabel#TopMenu[active="true"] {
+QLabel#TopMenu {
     background: transparent;
 }
 
-QLabel#TopMenu[active="true"] {
-    background: rgba(255,255,255,0.20);
-}
-
 QFrame#InputRow {
-    background-color: rgba(220, 225, 235, 0.35);
+    background-color: transparent;
     border: 1px solid rgba(255, 255, 255, 0.28);
     border-radius: 18px;
     min-height: 48px;
