@@ -53,10 +53,9 @@ class LoginWindow(QWidget):
         for text in ['About Us']:
             item = QLabel(text)
             item.setObjectName("TopMenu")
-            if text == "Login":
-                item.setProperty("active", True)
+            item.setAttribute(Qt.WA_StyledBackground, True)
             menu_layout.addWidget(item)
-
+            
         top_bar_layout.addWidget(brand)
         top_bar_layout.addStretch()
         top_bar_layout.addLayout(menu_layout)
