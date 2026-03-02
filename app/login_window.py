@@ -35,8 +35,11 @@ class LoginWindow(QWidget):
         root_layout.setContentsMargins(32, 18, 32, 18)
         root_layout.setSpacing(12)
 
-        top_bar = QHBoxLayout(self)
-        top_bar.setContentsMargins(0, 0, 0, 0)
+        top_bar_frame = QFrame()
+        top_bar_frame.setObjectName("LoginTopBar")
+        top_bar_layout = QHBoxLayout(top_bar_frame)
+        top_bar_layout.setContentsMargins(20, 10, 20, 10)
+
         brand = QLabel("♜ Online")
         brand.setObjectName("BrandLabel")
 
@@ -49,10 +52,10 @@ class LoginWindow(QWidget):
                 item.setProperty("active", True)
             menu_layout.addWidget(item)
 
-        top_bar.addWidget(brand)
-        top_bar.addStretch()
-        top_bar.addLayout(menu_layout)
-        root_layout.addLayout(top_bar)
+        top_bar_layout.addWidget(brand)
+        top_bar_layout.addStretch()
+        top_bar_layout.addLayout(menu_layout)
+        root_layout.addWidget(top_bar_frame)
 
         form_area = QVBoxLayout()
         form_area.setSpacing(16)
