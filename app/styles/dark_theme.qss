@@ -11,32 +11,53 @@ QMainWindow, QDialog {
 }
 
 QWidget#LoginWindow {
-    background: qlineargradient(
-        x1: 0, y1: 0,
-        x2: 1, y2: 1,
-        stop: 0 #1D07E5,
-        stop: 0.45 #140A5D,
-        stop: 1 #E71A3B
-    );
+    background-color: #091126;
+}
+
+QLabel#BackgroundImage {
+    border-radius: 16px;
 }
 
 QFrame#LoginCard {
-    background: rgba(14, 16, 34, 0.88);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 18px;
-    padding: 18px;
+    background: rgba(15, 26, 52, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 22px;
+    min-width: 560px;
+    max-width: 560px;
 }
 
-QLabel#LoginTitle {
-    font-size: 30px;
+QLabel#BrandLabel {
+    font-size: 26px;
     font-weight: 700;
-    color: #ffffff;
+    color:rgba(255, 255, 255, 0.95);
 }
 
-QLabel#LoginSubtitle {
-    color: rgba(255, 255, 255, 0.82);
-    font-size: 13px;
-    margin-bottom: 8px;
+QLabel#TopMenu {
+    font-size: 17px;
+    color: rgba(255, 255, 255, 0.9);
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+QLabel#TopMenu[active="true"] {
+    background: rgba(255,255,255,0.20);
+}
+
+QFrame#InputRow,
+QLineEdit {
+    background-color: rgba(160, 194, 255, 0.18);
+    boredr: 1px solid rgba(255,255,255,0.20);
+    border-radius: 28px;
+    min-height: 42px
+    padding: 2px 18px;
+}
+
+QLineEdit:focus {
+    border: 1px solid rgba(255,210,208,0.85);
+}
+
+QLineEdit::placeholder {
+    color: rgba(255,255,255,0.65);
 }
 
 QPushButton {
@@ -68,26 +89,18 @@ QPushButton:pressed {
 }
 
 QPushButton#PrimaryButton {
-    background: qlineargradient(
-        x1: 0, y1: 0,
-        x2: 1, y2: 0,
-        stop: 0 #1D07E5.
-        stop: 1 #E71A3B
-    );
-    min-height: 40px;
-    font-size: 14px;
+    background: #B57F72;
+    min-height: 46px;
+    border-radius: 24px;
+    font-size: 19px;
+    letter-spacing: 1px;
 }
+
 
 QPushButton#PrimaryButton:hover {
-    background: qlineargradient(
-        x1: 0, y1: 0,
-        x2: 1, y2: 0,
-        stop: 0 #3F2AFF,
-        stop: 1 #FF3C61
-    );
+    background: #C89082
 }
 
-QLineEdit,
 QComboBox,
 QListWidget,
 QTextEdit,
@@ -98,19 +111,14 @@ QPlainTextEdit {
     border: 1px solid #2B2F59;
     border-radius: 10px;
     padding: 8px 10px;
-    color: #ffffff
+    color: #ffffff;
 }
 
-QLineEdit:focus,
 QComboBox:focus,
 QListWidget:focus,
 QTextEdit:focus,
 QTreeWidget:focus {
     border: 1px solid #E71A3B;
-}
-
-QLineEdit::placeholder {
-    color: rgba(255, 255, 255, 0.45);
 }
 
 QComboBox:drop-down {
@@ -122,7 +130,7 @@ QComboBox QAbstractItemView {
     background-color: #191D3A;
     border: 1px solid #2B2F59;
     selection-background-color: #E71A3B;
-    selection-color: #FFFFFF
+    selection-color: #FFFFFF;
 }
 
 QCheckBox {
@@ -146,7 +154,7 @@ QFrame#Sidebar {
     background: qlineargradient(
         x1: 0, y1: 0,
         x2: 0, y2: 1,
-        stop: 0 # #171A34;
+        stop: 0 # #171A34,
         stop: 1 #10132A
     );
     border-right: 1px solid #2A2F56;
@@ -194,8 +202,13 @@ QDockWidget::title {
 }
 
 QFormLayout QLabel,
-QLabel {
+QLabel,
+QLabel#FooterLabel {
     color: rgba(255, 255, 255, 0.92);
+}
+
+QLabel#FooterLabel {
+    font-size:16px;
 }
 
 QMessageBox {
