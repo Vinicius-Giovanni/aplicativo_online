@@ -2,6 +2,7 @@ from pathlib import Path
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
+from PySide6.QtGui import QResizeEvent
 from PySide6.QtWidgets import (
     QWidget, QLineEdit, QPushButton,
     QVBoxLayout, QHBoxLayout, QMessageBox, QLabel, QFrame
@@ -16,26 +17,30 @@ class LoginWindow(QWidget):
         super().__init__()
         self.setObjectName("LoginWindow")
         self.setWindowTitle("RPA - Boxiamento Online")
-        self.setFixedSize(1024, 640)
+        self.setMinimumSize(1024, 640)
 
         self.background_path = Path(__file__).resolve().parent / 'assets' / 'images' / 'fundo_teste.png'
+        self.background_label = None
         self.filter_window = None
         self.setup_ui()
 
     def setup_ui(self):
-        background_label = QLabel(self)
-        background_label.setObjectName("BackgroundImage")
-        background_label.setGeometry(0, 0, self.width(), self.height())
-        bg_pixmap = QPixmap(str(self.background_path))
-        if not bg_pixmap.isNull():
-            background_label.setPixmap(bg_pixmap.scaled(self.size(), Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation))
-        background_label.lower()
+        self.background_label = QLabel(self)
+        self.background_label.setObjectName("BackgroundImage")
+        self.background_label.setGeometry(0, 0, self.width(), self.height())
+        self._refresh_background()
+        self.background_label.lower()
 
         root_layout = QVBoxLayout(self)
-        root_layout.setContentsMargins(32, 18, 32, 18)
+        root_layout.setContentsMargins(0, 0, 0, 0)
         root_layout.setSpacing(12)
 
-        top_bar_frame = QFrame()
+        top_bar_frame = QFrame(self)
+        top_bar_frame.setFixedHeight(110)
+        top_bar_frame.setStyleSheet("""
+            background-color: rgba(9, 54, 102, 0.70);
+            border: none;
+        """)
         top_bar_frame.setObjectName("LoginTopBar")
         top_bar_layout = QHBoxLayout(top_bar_frame)
         top_bar_layout.setContentsMargins(20, 10, 20, 10)
@@ -45,7 +50,7 @@ class LoginWindow(QWidget):
 
         menu_layout = QHBoxLayout()
         menu_layout.setSpacing(18)
-        for text in ['Login', 'About Us', 'Register', 'Contact']:
+        for text in ['About Us']:
             item = QLabel(text)
             item.setObjectName("TopMenu")
             if text == "Login":
@@ -58,6 +63,7 @@ class LoginWindow(QWidget):
         root_layout.addWidget(top_bar_frame)
 
         form_area = QVBoxLayout()
+        form_area.setContentsMargins(32, 12, 32, 0)
         form_area.setSpacing(16)
 
         self.input_empresa = QLineEdit(maxLength=2)
@@ -99,6 +105,7 @@ class LoginWindow(QWidget):
         root_layout.addLayout(form_area)
 
         footer = QHBoxLayout()
+        footer.setContentsMargins(32, 0, 32, 18)
         footer.addWidget(QLabel("About Us"))
         footer.addWidget(QLabel("Privacy Policy"))
         footer.addWidget(QLabel("Terms Of Use"))
@@ -126,6 +133,21 @@ class LoginWindow(QWidget):
         wrapper.setObjectName("InputRow")
         wrapper.setLayout(row)
         return wrapper
+    
+    def resizeEvent(self, event: QResizeEvent):
+        super().resizeEvent(event)
+        if self.background_label is not None:
+            self.background_label.setGeometry(0, 0, self.width(), self.height())
+            self._refresh_background()
+
+    def _refresh_background(self):
+        bg_pixmap = QPixmap(str(self.background_path))
+        if bg_pixmap.isNull() or self.background_label is None:
+            return
+
+        self.background_label.setPixmap(
+            bg_pixmap.scaled(self.size(), Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        )
 
     def logar(self):
         empresa = self.input_empresa.text()
@@ -158,4 +180,4 @@ class LoginWindow(QWidget):
         self.input_empresa.clear()
         self.input_matricula.clear()
         self.input_password.clear()
-        self.show()
+        self.showMaximized()

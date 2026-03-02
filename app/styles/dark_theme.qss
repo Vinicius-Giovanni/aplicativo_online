@@ -11,7 +11,7 @@ QMainWindow, QDialog {
 }
 
 QWidget#LoginWindow {
-    background-color: #091126;
+    background: transparent;
 }
 
 QLabel#BackgroundImage {
@@ -33,8 +33,8 @@ QLabel#BrandLabel {
 }
 
 QFrame#LoginTopBar {
-    background: rgba(0, 0, 0, 0.85);
-    border-radius: 12px;
+    background-color: rgba(9, 54, 102, 0.70);
+    border: none;
 }
 
 QLabel#TopMenu {
@@ -45,7 +45,7 @@ QLabel#TopMenu {
 }
 
 QLabel#TopMenu[active="true"] {
-    background: rgba(255,255,255,0.20);
+    background: transparent;
 }
 
 QFrame#InputRow {
