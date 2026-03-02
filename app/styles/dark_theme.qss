@@ -22,7 +22,7 @@ QWidget#LoginWindow {
 
 QFrame#LoginCard {
     background: rgba(14, 16, 34, 0.88);
-    border: 1px solid rbga(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 18px;
     padding: 18px;
 }
