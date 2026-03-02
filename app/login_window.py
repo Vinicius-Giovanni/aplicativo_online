@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
     QWidget, QLineEdit, QPushButton,
-    QVBoxLayout, QHBoxLayout ,QFormLayout, QMessageBox, QLabel, QFrame
+    QVBoxLayout, QHBoxLayout, QMessageBox, QLabel, QFrame
 )
 
 from log.qt_handler import QtLogHandler
@@ -36,6 +36,7 @@ class LoginWindow(QWidget):
         root_layout.setSpacing(12)
 
         top_bar = QHBoxLayout(self)
+        top_bar.setContentsMargins(0, 0, 0, 0)
         brand = QLabel("♜ Online")
         brand.setObjectName("BrandLabel")
 
@@ -70,42 +71,23 @@ class LoginWindow(QWidget):
         self.btn_login.setObjectName("PrimaryButton")
         self.btn_login.clicked.connect(self.logar)
 
-        form_layout = QFormLayout()
-        form_layout.setLabelAlignment(Qt.AlignLeft)
-        form_layout.setFormAlignment(Qt.AlignCenter)
-        form_layout.setHorizontalSpacing(10)
-        form_layout.setVerticalSpacing(14)
+        form_layout = QVBoxLayout()
+        form_layout.setSpacing(14)
 
-        user_icon = QLabel("👤")
-        pass_icon = QLabel("🔒")
+        empresa_widget = self._build_input_row(self.input_empresa, "🏢")
+        user_widget = self._build_input_row(self.input_matricula, "👤")
+        pass_widget = self._build_input_row(self.input_password, "🔒")
 
-        user_row = QHBoxLayout()
-        user_row.setSpacing(10)
-        user_row.addWidget(user_icon)
-        user_row.addWidget(self.input_matricula)
-
-        pass_row = QHBoxLayout()
-        pass_row.setSpacing(10)
-        pass_row.addWidget(pass_icon)
-        pass_row.addWidget(self.input_password)
-
-        user_widget = QFrame()
-        user_widget.setObjectName("InputRow")
-        user_widget.setLayout(user_row)
-
-        pass_widget = QFrame()
-        pass_widget.setObjectName("InputRow")
-        pass_widget.setLayout(pass_row)
-
-        form_layout.addRow("", self.input_empresa)
-        form_layout.addRow("", user_widget)
-        form_layout.addRow("", pass_widget)
+        form_layout.addWidget(empresa_widget)
+        form_layout.addWidget(user_widget)
+        form_layout.addWidget(pass_widget)
 
         card = QFrame()
         card.setObjectName("LoginCard")
         card_layout = QVBoxLayout(card)
         card_layout.setContentsMargins(26, 22, 26, 22)
         card_layout.addLayout(form_layout)
+        card_layout.addSpacing(10)
         card_layout.addWidget(self.btn_login)
 
         form_area.addStretch()
@@ -126,6 +108,21 @@ class LoginWindow(QWidget):
                 item.setObjectName("FooterLabel")
 
         root_layout.addLayout(footer)
+
+    def _build_input_row(self, line_edit: QLineEdit, icon_text: str) -> QFrame:
+        icon = QLabel(icon_text)
+        icon.setObjectName("InputIcon")
+
+        row = QHBoxLayout()
+        row.setContentsMargins(16, 4, 16, 4)
+        row.setSpacing(10)
+        row.addWidget(line_edit)
+        row.addWidget(icon)
+
+        wrapper = QFrame()
+        wrapper.setObjectName("InputRow")
+        wrapper.setLayout(row)
+        return wrapper
 
     def logar(self):
         empresa = self.input_empresa.text()
