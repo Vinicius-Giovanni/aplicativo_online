@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (
 
 from log.qt_handler import QtLogHandler
 from log.logger import setup_logger
+from app.duvidas_window import DuvidasWindow
 from app.main_window import MainWindow
 
 class LoginWindow(QWidget):
@@ -45,14 +46,14 @@ class LoginWindow(QWidget):
         menu_layout = QHBoxLayout()
         menu_layout.setSpacing(18)
 
-        item = QLabel('About Us')
-        item.setObjectName("TopMenu")
-        item.setAttribute(Qt.WA_StyledBackground, True)
+        self.btn_about = QPushButton('About Us')
+        self.btn_about.setObjectName("TopMenu")
+        self.btn_about.clicked.connect(self.abrir_duvidas)
 
-        item.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        item.setFixedHeight(32)
+        self.btn_about.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.btn_about.setFixedHeight(32)
 
-        menu_layout.addWidget(item)
+        menu_layout.addWidget(self.btn_about)
 
         top_bar_layout.addWidget(brand)
         top_bar_layout.addStretch()
@@ -169,6 +170,16 @@ class LoginWindow(QWidget):
 
         self.main_window.show()
         self.hide()
+
+    def abrir_duvidas(self):
+        if not hasattr(self, "duvidas_window") or self.duvidas_window is None:
+            self.duvidas_window = DuvidasWindow()
+
+        self.duvidas_window.setWindowTitle("About Us")
+        self.duvidas_window.resize(800, 640)
+        self.duvidas_window.show()
+        self.duvidas_window.raise_()
+        self.duvidas_window.activateWindow()
     
     def on_logout(self):
         self.input_empresa.clear()

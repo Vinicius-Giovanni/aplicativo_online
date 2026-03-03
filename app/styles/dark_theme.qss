@@ -41,17 +41,17 @@ QFrame#LoginTopBar {
     max-height: 110px;
 }
 
-QLabel#TopMenu {
+QPushButton#TopMenu {
     background: transparent;
     padding: 6px 12px;
     border-radius: 10px;
 }
 
-QLabel#TopMenu:hover {
+QPushButton#TopMenu:hover {
     background: rgba(255, 255, 255, 0.20);
 }
 
-QLabel#TopMenu {
+QPushButton#TopMenu {
     background-color: transparent;
 }
 
@@ -264,4 +264,38 @@ QScrollBar::add-page:vertical,
 QScrollBar::sub-page:vertical {
     background: none;
     height: 0;
+}
+
+QWidget#DuvidasWindow {
+    background-color: #0E1022;
+}
+
+QLabel#DuvidasSubtitle {
+    color: rgba(255, 255, 255, 0.72);
+    margin-bottom: 8px;
+}
+
+QFrame#DuvidaTopico {
+    background-color: #171A34;
+    border: 1px solid #2B2F59;
+    border-radius: 10px;
+    padding: 8px;
+}
+
+QToolButton#DuvidaTopicoBotao {
+    background: transparent;
+    border: none;
+    text-align: left;
+    font-weight: 600;
+    color: #FFFFFF;
+    padding: 4px;
+}
+
+QToolButton#DuvidaTopicoBotao:hover {
+    color: #E6E9FF;
+}
+
+QLabel#DuvidaTopicoTexto {
+    color: rgba(255, 255, 255, 0.88);
+    padding: 4px;
 }
