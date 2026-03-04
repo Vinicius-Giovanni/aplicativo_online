@@ -20,11 +20,11 @@ O sistema transforma um processo repetitivo em uma operação guiada por interfa
 
 ### Janela de login
 
-![Janela de login](aplicativo_login_window.png)
+![Janela de login](app/assets/images/login.png)
 
-### Janela principal
+### Filtrar Carga
 
-![Janela principal](aplicativo_main_window.png)
+![Filtrar Carga](app/assets/images/filtrar_carga.png)
 
 ## 🧱 Estrutura do projeto
 
