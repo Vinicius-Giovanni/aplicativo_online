@@ -105,7 +105,7 @@ class LoginWindow(QWidget):
         footer = QHBoxLayout()
         footer.setContentsMargins(32, 0, 32, 18)
         footer.addStretch()
-        footer.addWidget(QLabel("© 2021 Key. All Rights Reserved | Design By Vinicíus Giovanni"))
+        footer.addWidget(QLabel("© 2026 Key. All Rights Reserved | Design By Vinicíus Giovanni"))
 
         for i in range(footer.count()):
             item = footer.itemAt(i).widget()
