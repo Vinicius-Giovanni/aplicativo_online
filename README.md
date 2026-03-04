@@ -26,6 +26,22 @@ O sistema transforma um processo repetitivo em uma operação guiada por interfa
 
 ![Filtrar Carga](app/assets/images/filtrar_carga.png)
 
+### Emitir Carga
+
+![Emitir & Boxiar Carga](app/assets/images/boxiamento_e_emissao.png)
+
+### Configurações
+
+![Configurações](app/assets/images/config.png)
+
+### Histórico
+
+![Histórico](app/assets/images/historico.png)
+
+### Dúvidas
+
+![Dúvidas](app/assets/images/duvidas.png)
+
 ## 🧱 Estrutura do projeto
 
 ```text
