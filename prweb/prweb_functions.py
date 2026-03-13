@@ -556,6 +556,41 @@ def filtragem_de_carga(page,
 
     page.wait_for_timeout(500)
 
+def transferencia_pedido(page,
+                         empresa,
+                         matricula,
+                         password,
+                         motivo_mudanca,
+                         carga,
+                         n_pedido: list[str]):
+    
+    logger.info(f"Iniciando transferencia de pedidos\nCarga:{carga}")
+
+    documento_carga = page.locator("xpath=/html/body/form[1]/table[3]/tbody/tr/td[1]/table/tbody/tr[13]/td[1]/input")
+    documento_carga.click() # Checkbox Documentos/Carga
+
+    inclui = page.locator('xpath=//*[@id="NM_BOT_ICL"]')
+    inclui.click()
+
+    empresa_ = page.locator("xpath=/html/body/form[1]/table[3]/tbody/tr/td[5]/input")
+    empresa_.clear()
+    empresa_.type(empresa)
+
+    matricula_ = page.locator("xpath=/html/body/form[1]/table[3]/tbody/tr/td[6]/input")
+    matricula_.type(matricula)
+
+    senha_ = page.locator("xpath=/html/body/form[1]/table[3]/tbody/tr/td[7]/b/input")
+    senha_.type(password)
+
+    for i in n_pedido:
+        n_do_documento_ = page.locator("xpath=/html/body/form[1]/table[4]/tbody/tr[1]/td[2]/input[1]")
+        n_do_documento_.type(i)
+
+        processa_ = page.locator('xpath=//*[@id="NM_BOT_PRC"]')
+        processa_.click()
+        
+    pass
+
 def boxiamento_carga(page,
                     empresa,
                     matricula,
