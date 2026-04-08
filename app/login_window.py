@@ -40,7 +40,7 @@ class LoginWindow(QWidget):
         top_bar_layout = QHBoxLayout(top_bar_frame)
         top_bar_layout.setContentsMargins(20, 10, 20, 10)
 
-        brand = QLabel("♜ RPA - Boxiamento de Cargas Online")
+        brand = QLabel("♜ RPA - Boxeamento de Cargas Online")
         brand.setObjectName("BrandLabel")
 
         menu_layout = QHBoxLayout()
