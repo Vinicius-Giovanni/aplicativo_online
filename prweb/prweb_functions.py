@@ -700,6 +700,10 @@ def boxiamento_carga(page,
                     carga_ = page.locator(f"xpath={xpath_carga}").inner_text()
                     carga = re.search(r"\d+", carga_).group()
 
+                    # ============== Extração de Estado da Carga =============
+
+                    xpath_estado_carga = page.locator(f"/html/body/form/table[8]/tbody/tr[2]/td/table[{i}]/tbody/tr/td[5]").inner_text()
+
                     # ============== Extração de Status da Carga ==============
 
                     xpath_status_carga = page.locator(f"xpath=/html/body/form/table[8]/tbody/tr[2]/td/table[{i}]/tbody/tr/td[2]").inner_text()
@@ -769,6 +773,11 @@ def boxiamento_carga(page,
                             if estado_checkbox_antes == "checked": # <<< Checkbox estiver desmarcado
                                 xpath_checkbox_emite.click() # <<< Desmarca checkbox
 
+                        if "PE" in xpath_estado_carga:
+                            v_box.type("000")
+
+                        logger.info(f"Carga do estado de {xpath_estado_carga}")
+
                         # Boxiamento priorizando regras com rota e match em contrato
                         box_resolvido = _resolve_box_for_carga(
                             cargas_box_map=cargas_box_map,
@@ -791,7 +800,8 @@ def boxiamento_carga(page,
                         "Box": box,
                         "Status da Carga": status_carga,
                         "Botão Emite Antes": estado_checkbox_antes,
-                        "Botão Emite Depois":estado_checkbox_depois
+                        "Botão Emite Depois":estado_checkbox_depois,
+                        "Estado": xpath_estado_carga
                         }
 
                     tabela.append(linha)
