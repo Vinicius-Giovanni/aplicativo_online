@@ -700,10 +700,6 @@ def boxiamento_carga(page,
                     carga_ = page.locator(f"xpath={xpath_carga}").inner_text()
                     carga = re.search(r"\d+", carga_).group()
 
-                    # ============== Extração de Estado da Carga =============
-
-                    xpath_estado_carga = page.locator(f"/html/body/form/table[8]/tbody/tr[2]/td/table[{i}]/tbody/tr/td[5]").inner_text()
-
                     # ============== Extração de Status da Carga ==============
 
                     xpath_status_carga = page.locator(f"xpath=/html/body/form/table[8]/tbody/tr[2]/td/table[{i}]/tbody/tr/td[2]").inner_text()
@@ -763,6 +759,12 @@ def boxiamento_carga(page,
 
                     estado_checkbox_depois = get_checkbox_state(xpath_checkbox_emite)
 
+                    # ============== Extração de Estado da Carga =============
+
+                    xpath_estado_carga = page.locator(f"xpath=/html/body/form/table[8]/tbody/tr[2]/td/table[{i}]/tbody/tr/td[5]").inner_text()
+
+                    logger.info(f"Carga do estado de {xpath_estado_carga}")
+
                     # ============== Lógica de Boxiamento ==============
                     box = ""
                     v_box = xpath_valor_box.input_value()
@@ -774,22 +776,24 @@ def boxiamento_carga(page,
                                 xpath_checkbox_emite.click() # <<< Desmarca checkbox
 
                         if "PE" in xpath_estado_carga:
-                            v_box.type("000")
+                            box = "921"
+                            xpath_valor_box.fill(box)
 
-                        logger.info(f"Carga do estado de {xpath_estado_carga}")
+                            logger.info(f"Box PE {box}")
 
-                        # Boxiamento priorizando regras com rota e match em contrato
-                        box_resolvido = _resolve_box_for_carga(
-                            cargas_box_map=cargas_box_map,
-                            rota_atual=rota,
-                            contrato=xpath_contrato,
-                            transportadora=xpath_transportadora,
-                        )
-                        
-                        if box_resolvido:
-                            xpath_valor_box.clear()
-                            box = box_resolvido
-                            xpath_valor_box.type(box)
+                        else:
+                            # Boxiamento priorizando regras com rota e match em contrato
+                            box_resolvido = _resolve_box_for_carga(
+                                cargas_box_map=cargas_box_map,
+                                rota_atual=rota,
+                                contrato=xpath_contrato,
+                                transportadora=xpath_transportadora,
+                            )
+                            
+                            if box_resolvido:
+                                xpath_valor_box.clear()
+                                box = box_resolvido
+                                xpath_valor_box.type(box)
 
                     # ============== Tabela ==============
 
