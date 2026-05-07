@@ -20,6 +20,21 @@ class EmissaoWindow(QWidget):
         self.setup_ui()
 
     def setup_ui(self):
+        """
+        Configura e monta a interface gráfica da janela de emissão.
+
+        A função cria os campos de entrada, botões e listas utilizados
+        no processo de emissão, além de definir os layouts da janela
+        e conectar os eventos aos respectivos métodos.
+
+        Componentes configurados:
+        - Campo de data de entrega
+        - Lista de rotas para emissão
+        - Campo para inclusão manual de rotas
+        - Botão de adicionar rota
+        - Botão de execução de emissão
+        """
+
         # Data
         self.data = QLineEdit(maxLength=8)
         self.data.setPlaceholderText("DDMMAAAA")
@@ -58,6 +73,20 @@ class EmissaoWindow(QWidget):
         self.setLayout(layout)
     
     def executar_emissao(self):
+        """
+        Executa o processo de emissão das rotas selecionadas.
+
+        A função valida os campos obrigatórios, coleta os parâmetros
+        da emissão e inicia a execução em uma thread separada para evitar bloqueio da interface gráfica.
+
+        Fluxo executado:
+        - Validação da data de entrega
+        - Validação das rotas selecionadas
+        - Montagem dos parâmetros da emissão
+        - Inicialização da thread e do worker
+        - Conexão dos sinas de execução, finalização e erro
+        - Início do processamento da emissão
+        """
         
         if not self.data.text():
             QMessageBox.warning(self, "Campo obrigatório", "A data de entrega deve ser preenchida.")
@@ -95,14 +124,43 @@ class EmissaoWindow(QWidget):
         self.thread.start()
 
     def on_finished(self):
+        """
+        Trata a finalização do processo de emissão.
+
+        Exibe uma mensagem de sucesso ao usuário e
+        reabilita o botão de execução de emissão.
+        """
+
         QMessageBox.information(self, "Concluído", "Emissão de cargas concluída com sucesso.")
         self.btn_executar.setEnabled(True)
 
     def on_error(self, message):
+        """
+        Trata erros ocorridos durante o processo de emissão.
+
+        Args:
+            message(str): Mensagem de erro retornada pelo processo.
+        
+        Exibe a mensagem de erro ao usuário e
+        reabilita o botão de execução da emissão.
+        """
+
         QMessageBox.critical(self, "Erro", message)
         self.btn_executar.setEnabled(True)
 
     def carregar_rotas(self):
+        """
+        Carrega as rotas disponíveis no arquivo de configuração.
+
+        A função realiza a leitura do arquivo 'rotas.json',
+        adiciona as rotas na lista da interface e seleciona
+        automaticamente todos as rotas carregadas.
+
+        Tratamentos realizados:
+        - Criação do arquivo de rotas caso não exista
+        - Validação de estrutura JSON inválida
+        """
+
         self.lista_rotas.clear()
 
         try:
@@ -123,6 +181,14 @@ class EmissaoWindow(QWidget):
             self.lista_rotas.item(i).setSelected(True)
 
     def adicionar_rota_manual(self):
+        """
+        Adiciona manualmente uma rota à lista de emissão.
+
+        A função valida o preenchimento do campo de rota,
+        evita duplicidades na lista e seleciona automaticamente
+        a rota adicionada ou já existente.
+        """
+
         rota = self.input_rota_manual.text().strip()
         if not rota:
             QMessageBox.warning(self, "Campo vazio", "Digite uma rota para adicionar.")
