@@ -7,6 +7,15 @@ from logging import getLogger
 logger = getLogger("RPA")
 
 class AppConfig:
+    """
+    Gerencia arquivos de configuração locais da aplicação, garantindo a existência
+    e integridade de arquivos JSON e arquivos de tema (QSS).
+
+    Responsável por:
+        - Criar diretório de configuração no AppData (Windows)
+        - Inicializar arquivos de rotas e cargas/box
+        - Sincronizar arquivo de tema (dark_theme.qss)
+    """
 
     DEFAULT_ROTAS = [
         "2950", "1989", "2023", "2869",
@@ -48,7 +57,19 @@ class AppConfig:
         self._ensure_dark_theme_file()
 
     def _CREATE_CONFIG_DIRECTORY(self) -> Path:
-        # Pega caminho padrão do AppData Local
+        """
+        Cria e retorna o diretório de configuração da aplicação no AppData Local.
+
+        O diretório criado segue o padrão:
+            %LOCALAPPDATA%/config_app_online
+
+        Returns:
+            Path: Caminho do diretório de configuração.
+
+        Raises:
+            Warning: Caso a variável de ambiente LOCALAPPDATA não esteja disponível.
+        """
+
         local_appdata = os.getenv("LOCALAPPDATA")
 
         if not local_appdata:
@@ -61,8 +82,10 @@ class AppConfig:
     
     def _ensure_rotas_file(self):
         """
-        Cria o rotas.json se ele não existir,
-        Não sobreescreve
+        Garante a existência do arquivo rotas.json.
+
+        Caso o arquivo não exista, cria com as rotas padrão definidas em DEFAULT_ROTAS.
+        Não sobrescreve arquivos existentes.
         """
         if not self.ROTAS_FILE.exists():
             DATA = {
@@ -74,7 +97,10 @@ class AppConfig:
 
     def _ensure_dark_theme_file(self):
         """
-        Garante que o dark_theme.qss local exista e esteja sincronizado com o arquivo padrão do projeto.
+        Garante a existência do arquivo cargas_box.json.
+
+        Caso não exista, cria o arquivo utilizando os dados padrão definidos em
+        DEFAULT_CARGAS_BOX. Não sobrescreve arquivos existentes.
         """
         
         if not self.theme_source_path or not self.theme_source_path.exists():
@@ -98,8 +124,16 @@ class AppConfig:
 
     def _ensure_cargas_box_file(self):
         """
-        Cria o cargas_box.json se ele não existir,
-        Não sobreescreve.
+        Garante sincronização do arquivo dark_theme.qss local com o arquivo base.
+
+        Regras:
+            - Se o arquivo base não existir, apenas registra warning.
+            - Se o arquivo local não existir, ele é criado.
+            - Se existir e estiver diferente, é atualizado.
+
+        Comportamento:
+            - Evita sobrescrita desnecessária.
+            - Mantém o tema local sempre atualizado com o padrão do projeto.
         """
         if not self.CARGAS_BOX_FILE.exists():
             with open(self.CARGAS_BOX_FILE, 'w', encoding='utf-8') as f:

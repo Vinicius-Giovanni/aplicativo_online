@@ -9,6 +9,20 @@ from prweb.prweb_functions import (
 )
 
 class PrwebWorker(QObject):
+    """
+    Worker assíncrono responsável pela execução de automações no sistema PRWEB
+    utilizando Playwright, integrado ao Qt via sinais (PySide6).
+
+    Executa diferentes fluxos de automação baseados na ação informada em `params`:
+        - filtragem de carga
+        - emissão de carga
+        - boxeamento de carga
+
+    Emite sinais para controle de estado da execução:
+        - finished: sempre emitido ao final da execução (sucesso ou falha)
+        - succeeded: emitido quando o fluxo executa sem erros
+        - error: emitido em caso de exceção
+    """
     finished = Signal()
     succeeded = Signal()
     error = Signal(str)
@@ -18,6 +32,24 @@ class PrwebWorker(QObject):
         self.params = params
 
     def run(self):
+        """
+        Executa o fluxo principal de automação no PRWEB.
+
+        Fluxo:
+            1. Inicializa navegador via Playwright
+            2. Realiza login no sistema PRWEB
+            3. Executa a ação definida em params["action"]:
+                - "filtragem" → filtragem_de_carga
+                - "emissao" → emissao_de_carga
+                - "boxiamento" → boxiamento_carga
+            4. Emite sinal de sucesso ou erro
+            5. Finaliza e fecha navegador de forma segura
+
+        Sinais emitidos:
+            - succeeded: execução concluída com sucesso
+            - error(str): erro capturado durante execução
+            - finished: sempre emitido ao final (cleanup garantido)
+        """
         try:
             playwright, browser, page = start_browser()
 

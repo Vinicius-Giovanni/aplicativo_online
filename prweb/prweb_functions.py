@@ -11,6 +11,23 @@ logger = getLogger("RPA")
 
 
 def _load_sp_rotas_from_config():
+    """
+    Carrega a lista de rotas SP a partir do arquivo de configuração.
+
+    A função lê o arquivo de configuração definido em `AppConfig`,
+    interpreta seu conteúdo em formato JSON e retorna apenas as rotas
+    relacionadas a SP.
+
+    Lógica utilizada:
+        - Instancia a configuração da aplicação.
+        - Abre o arquivo de rotas definido em `ROTAS_FILE`.
+        - Realiza o parsing do conteúdo JSON.
+        - Retorna a chave `sp_rotas` caso exista.
+
+    Retorno:
+        list:
+            Lista de rotas SP. Caso a chave não exista, retorna lista vazia.
+    """
     app_config = AppConfig()
 
     with open(app_config.ROTAS_FILE, "r", encoding="utf-8") as f:
@@ -19,6 +36,35 @@ def _load_sp_rotas_from_config():
     return rotas_data.get("sp_rotas", [])
 
 def _normalize_cargas_box(cargas_box_data):
+    """
+    Normaliza diferentes formatos de dados de cargas e boxes.
+
+    A função padroniza a estrutura de entrada, garantindo que o retorno
+    seja sempre uma lista de dicionários no formato esperado pela aplicação.
+
+    Lógica utilizada:
+        - Se a entrada for uma lista:
+            * Filtra apenas itens do tipo dict.
+            * Normaliza e limpa os campos "carga", "box" e "rota".
+            * Ignora registros inválidos (sem box ou sem identificação).
+        - Se a entrada for um dict:
+            * Converte pares chave/valor em estrutura padrão.
+            * Define "rota" como vazio por padrão.
+        - Retorna sempre uma lista padronizada de registros válidos.
+
+    Parâmetros:
+        cargas_box_data (list | dict):
+            Estrutura de dados contendo informações de carga e box.
+
+    Retorno:
+        list[dict]:
+            Lista normalizada no formato:
+            {
+                "carga": str,
+                "box": str,
+                "rota": str
+            }
+    """
     if isinstance(cargas_box_data, list):
         normalized = []
         for item in cargas_box_data:
@@ -51,6 +97,26 @@ def _normalize_cargas_box(cargas_box_data):
     return normalized
 
 def _normalize_text_for_match(value):
+    """
+    Normaliza um texto para padronização de comparação.
+
+    A função trata o texto de entrada para facilitar comparações,
+    removendo inconsistências de espaçamento e padronizando o formato.
+
+    Lógica utilizada:
+        - Converte o valor para string em caixa alta.
+        - Remove espaços extras no início e fim.
+        - Substitui múltiplos espaços por um único espaço.
+        - Normaliza espaços ao redor de caracteres especiais (> e -).
+
+    Parâmetros:
+        value:
+            Texto de entrada que será normalizado.
+
+    Retorno:
+        str:
+            Texto normalizado para comparação.
+    """
     normalized = str(value or "").upper().strip()
     normalized = re.sub(r"\s+", " ", normalized)
     normalized = re.sub(r"\s*>\s*", ">", normalized)
@@ -58,6 +124,44 @@ def _normalize_text_for_match(value):
     return normalized
 
 def _resolve_box_for_carga(cargas_box_map, rota_atual, contrato, transportadora):
+    """
+    Resolve o box correspondente a uma carga com base em regras de prioridade.
+
+    A função aplica um conjunto de regras para determinar o box mais adequado,
+    considerando rota, contrato e transportadora.
+
+    Lógica utilizada:
+        - Normaliza os parâmetros de entrada para comparação.
+        - Separa as regras em três grupos:
+            * Somente rota
+            * Com rota definida
+            * Sem rota definida
+        - Aplica a seguinte prioridade de decisão:
+            1. Regras com rota e carga vazia (prioridade máxima por rota)
+            2. Regras com rota + match em contrato
+            3. Regras com rota + match em transportadora
+            4. Regras sem rota + match em contrato
+            5. Regras sem rota + match em transportadora
+        - Retorna o primeiro box que satisfaz a regra.
+        - Caso nenhuma regra seja atendida, retorna string vazia.
+
+    Parâmetros:
+        cargas_box_map (list[dict]):
+            Lista de regras contendo carga, box e rota.
+
+        rota_atual (str):
+            Rota atual utilizada como filtro principal.
+
+        contrato (str):
+            Informação de contrato usada para matching.
+
+        transportadora (str):
+            Nome da transportadora usada para matching.
+
+    Retorno:
+        str:
+            Box resolvido conforme as regras ou string vazia caso não encontre.
+    """
     """
     Resolve o box com suporte a regra somente por rota.
 
@@ -122,6 +226,23 @@ def _resolve_box_for_carga(cargas_box_map, rota_atual, contrato, transportadora)
     return ""
 
 def _load_cargas_box_from_config():
+    """
+    Carrega e normaliza a configuração de cargas e boxes.
+
+    A função lê o arquivo de configuração definido em `AppConfig`,
+    carrega os dados em formato JSON e aplica normalização para
+    padronizar a estrutura utilizada na aplicação.
+
+    Lógica utilizada:
+        - Instancia a configuração da aplicação.
+        - Abre o arquivo definido em `CARGAS_BOX_FILE`.
+        - Carrega os dados em formato JSON.
+        - Normaliza os dados utilizando `_normalize_cargas_box`.
+
+    Retorno:
+        list[dict]:
+            Lista de cargas e boxes já normalizados.
+    """
     app_config = AppConfig()
 
     with open(app_config.CARGAS_BOX_FILE, 'r', encoding='utf-8') as f:
@@ -131,7 +252,21 @@ def _load_cargas_box_from_config():
 
 def start_browser():
     """
-    Configura e inicia a instancia
+    Inicializa e configura a instância do navegador.
+
+    A função inicia o Playwright em modo síncrono, lança uma instância
+    personalizada do Chromium e retorna os objetos necessários para
+    controle da automação.
+
+    Lógica utilizada:
+        - Inicia o Playwright.
+        - Abre o navegador Chromium via configuração customizada.
+        - Retorna os objetos de controle da sessão.
+
+    Retorno:
+        tuple:
+            (playwright, browser, page)
+            Instâncias necessárias para controle do navegador.
     """
 
     playwright = sync_playwright().start()
@@ -146,7 +281,60 @@ def emissao_de_carga(page,
                 rotas=None):
     
     """
-    Realiza a emissao das cargas
+    Executa o processo automatizado de emissão de cargas no sistema web.
+
+    A função utiliza automação de navegador para navegar no sistema,
+    processar rotas, extrair informações de cargas e ajustar estados
+    de emissão com base nas regras de negócio.
+
+    Lógica utilizada:
+        - Inicializa o fluxo de emissão de cargas na interface web.
+        - Preenche credenciais e dados operacionais (empresa, matrícula, senha).
+        - Obtém lista de rotas (parâmetro ou configuração externa).
+        - Para cada rota:
+            * Preenche dados de filtro (rota, data e credenciais).
+            * Processa a consulta de cargas.
+            * Lê quantidade de cargas retornadas.
+            * Itera sobre os registros extraindo informações como:
+                - código da carga
+                - status da carga
+                - transportadora
+                - estado do box
+                - estado do checkbox de emissão
+            * Aplica regras condicionais para marcar/desmarcar emissão.
+            * Monta tabela de controle da execução.
+        - Trata paginação quando necessário.
+        - Finaliza processamento de cada rota.
+        - Consolida resultados em uma tabela geral.
+
+    Regras principais:
+        - Carga "Fechada" com box preenchido ativa emissão.
+        - Carga "Fechada" sem box desativa emissão.
+        - Carga "Aberta" desativa emissão.
+        - Controle de paginação quando limite de registros é atingido.
+
+    Parâmetros:
+        page:
+            Instância do Playwright responsável pela automação do navegador.
+
+        empresa:
+            Código da empresa utilizado no login/processo.
+
+        matricula:
+            Identificação do usuário no sistema.
+
+        password:
+            Senha de acesso ao sistema.
+
+        data (str):
+            Data de referência da emissão.
+
+        rotas (list | None):
+            Lista de rotas a serem processadas. Caso não informado,
+            utiliza configuração padrão.
+
+    Retorno:
+        None
     """
     
     logger.info("Iniciando emissão de carga")
@@ -230,6 +418,30 @@ def emissao_de_carga(page,
                     # ============== Extração de Carga ==============
 
                     def resolve_xpath_carga(page, i):
+                        """
+                        Resolve dinamicamente o XPath da carga na tabela do sistema.
+
+                        A função determina qual estrutura de XPath deve ser utilizada
+                        para acessar corretamente o elemento da carga, dependendo da
+                        presença de um link (<a>) no nó esperado.
+
+                        Lógica utilizada:
+                            - Monta o XPath base da carga com base no índice informado.
+                            - Verifica se existe um elemento <a> no caminho esperado.
+                            - Se existir, retorna o XPath com link.
+                            - Caso contrário, retorna o XPath base.
+
+                        Parâmetros:
+                            page:
+                                Instância da página do Playwright utilizada para inspeção.
+
+                            i (int):
+                                Índice da linha da tabela onde a carga está localizada.
+
+                        Retorno:
+                            str:
+                                XPath correto para acessar o elemento da carga.
+                        """
                         base = f"/html/body/form/table[8]/tbody/tr[2]/td/table[{i}]/tbody/tr/td[2]"
                         xpath_com_a = base + "/a"
 
@@ -274,6 +486,28 @@ def emissao_de_carga(page,
                     # ============== Condição: Se o status_carga for "Fechado" a checkbox EMITE deve ser "checked" ==============
 
                     def get_checkbox_state(locator):
+                        """
+                        Retorna o estado atual de um checkbox no DOM.
+
+                        A função avalia o elemento e determina se ele está desabilitado,
+                        marcado ou desmarcado.
+
+                        Lógica utilizada:
+                            - Verifica se o atributo "disabled" está presente.
+                            - Caso não esteja desabilitado, verifica se está marcado.
+                            - Caso contrário, considera como desmarcado.
+
+                        Parâmetros:
+                            locator:
+                                Elemento (Playwright Locator) representando o checkbox.
+
+                        Retorno:
+                            str:
+                                Estado do checkbox:
+                                - "disabled"
+                                - "checked"
+                                - "unchecked"
+                        """                        
                         return (
                             "disabled" if locator.get_attribute("disabled") is not None
                             else "checked" if locator.is_checked()
@@ -371,7 +605,36 @@ def login_prweb(page,
                 matricula,
                 password):
     """
-    Realiza o login
+    Realiza o processo de autenticação no sistema PRWEB.
+
+    A função acessa a URL do sistema, preenche os campos de login,
+    executa a autenticação e configura a aplicação para o módulo
+    de roteirização.
+
+    Lógica utilizada:
+        - Abre a URL do sistema PRWEB.
+        - Aguarda carregamento da página inicial.
+        - Preenche credenciais (empresa, matrícula e senha).
+        - Executa o login.
+        - Seleciona o módulo "Roteirização".
+        - Preenche dados adicionais de contexto (empresa, filial e tipo de atividade).
+        - Avança para a próxima etapa do sistema.
+
+    Parâmetros:
+        page:
+            Instância do Playwright utilizada para automação do navegador.
+
+        empresa:
+            Código da empresa utilizado no login.
+
+        matricula:
+            Identificação do usuário no sistema.
+
+        password:
+            Senha de acesso ao sistema.
+
+    Retorno:
+        None
     """
 
     url = "https://prweb01/bahia/gateway?hptAppId=W1A1&hptExec=Y"
@@ -432,8 +695,81 @@ def filtragem_de_carga(page,
                 CROSSDOCKING: str = "Não",
                 dt_entrega: str = "",
                 modalidade= "OUTRAS TRANSPORTADORAS (LEVE)" or "ENTREGA PELOS CORREIOS"):
-
+    
     """
+    Executa o processo de filtragem de cargas no sistema PRWEB.
+
+    A função automatiza a aplicação de filtros na interface web,
+    consulta os resultados e retorna informações consolidadas sobre
+    cargas, pedidos e transportadoras.
+
+    Lógica utilizada:
+        - Acessa a tela de filtragem de cargas.
+        - Seleciona opções iniciais de consulta.
+        - Preenche credenciais e parâmetros de busca.
+        - Aplica filtros de modalidade, SKU e datas.
+        - Seleciona tipos de carga conforme parâmetros (mono, multi, B2B, B2C, crossdocking).
+        - Executa a consulta no sistema.
+        - Lê e registra os resultados retornados:
+            * pedidos selecionados
+            * pedidos por tipo
+            * quantidade de cargas
+            * transportadoras
+            * pedidos processados
+        - Finaliza retornando ao menu principal.
+
+    Parâmetros:
+        page:
+            Instância do Playwright responsável pela automação.
+
+        empresa:
+            Código da empresa utilizada no login.
+
+        matricula:
+            Identificação do usuário no sistema.
+
+        password:
+            Senha de acesso.
+
+        sku (str):
+            Código SKU para filtro de produtos.
+
+        dt_limite_exp_retro (str):
+            Data limite de expedição retroativa.
+
+        dt_limite_exp_posterior (str):
+            Data limite de expedição posterior.
+
+        dt_limite_exp_start (str):
+            Data inicial do período de expedição.
+
+        dt_limite_exp_end (str):
+            Data final do período de expedição.
+
+        mono (str):
+            Flag para cargas monotransportadas.
+
+        multiplo (str):
+            Flag para cargas multitransportadas.
+
+        B2B (str):
+            Flag para cargas B2B.
+
+        B2C (str):
+            Flag para cargas B2C.
+
+        CROSSDOCKING (str):
+            Flag para cargas crossdocking.
+
+        dt_entrega (str):
+            Data de entrega.
+
+        modalidade (str):
+            Modalidade da rota selecionada.
+
+    Retorno:
+        None
+
     Faz a filtragem das cargas\n
     page: herdado da função login_prweb\n
     dt_limite_exp_retro: Data limite de expedição retroativa (DDMMAAAA)\n
@@ -564,6 +900,47 @@ def transferencia_pedido(page,
                          carga,
                          n_pedido: list[str]):
     
+    """
+    Executa a transferência de pedidos vinculados a uma carga no sistema PRWEB.
+
+    A função automatiza a navegação na tela de transferência, realiza o
+    preenchimento de credenciais e processa cada pedido informado.
+
+    Lógica utilizada:
+        - Inicia o fluxo de transferência de pedidos.
+        - Seleciona a opção de documentos/carga.
+        - Acessa a funcionalidade de inclusão.
+        - Preenche credenciais do usuário (empresa, matrícula e senha).
+        - Para cada pedido da lista:
+            * Insere o número do documento.
+            * Executa o processamento da transferência.
+
+    Parâmetros:
+        page:
+            Instância do Playwright utilizada na automação.
+
+        empresa:
+            Código da empresa para autenticação.
+
+        matricula:
+            Identificação do usuário no sistema.
+
+        password:
+            Senha de acesso ao sistema.
+
+        motivo_mudanca:
+            Motivo da transferência (não utilizado no fluxo atual).
+
+        carga:
+            Identificador da carga associada à transferência.
+
+        n_pedido (list[str]):
+            Lista de números de pedidos a serem transferidos.
+
+    Retorno:
+        None
+    """
+    
     logger.info(f"Iniciando transferencia de pedidos\nCarga:{carga}")
 
     documento_carga = page.locator("xpath=/html/body/form[1]/table[3]/tbody/tr/td[1]/table/tbody/tr[13]/td[1]/input")
@@ -598,7 +975,69 @@ def boxiamento_carga(page,
                     data,
                     rotas=None):
     """
-    Realiza o boxiamento
+    Executa o processo automatizado de boxiamento de cargas no sistema PRWEB.
+
+    A função realiza a consulta de cargas por rota, aplica regras de boxiamento
+    e ajusta automaticamente valores de box e status de emissão conforme regras
+    de negócio definidas.
+
+    Lógica utilizada:
+        - Inicializa o fluxo de consulta de cargas no sistema.
+        - Preenche credenciais de acesso.
+        - Obtém lista de rotas (parâmetro ou configuração padrão).
+        - Para cada rota:
+            * Realiza consulta de cargas.
+            * Aguarda retorno da tabela de resultados.
+            * Percorre as cargas retornadas (com paginação quando necessário).
+            * Para cada carga:
+                - Extrai informações como:
+                    * código da carga
+                    * status (Aberta/Fechada)
+                    * transportadora
+                    * contrato
+                    * estado
+                    * valor de box atual
+                    * checkbox de emissão
+                - Aplica regras de emissão:
+                    * Cargas abertas desmarcam emissão.
+                    * Cargas fechadas marcam emissão.
+                    * Casos com contrato ausente seguem regra simplificada.
+                - Aplica lógica de boxiamento:
+                    * Regra especial para estado "PE" (box fixo).
+                    * Caso contrário, utiliza `_resolve_box_for_carga`.
+            * Registra cada carga processada em uma tabela de controle.
+        - Trata paginação quando o limite de registros é atingido.
+        - Reprocessa consulta quando não há cargas.
+        - Consolida e exibe tabela final de execução.
+
+    Regras principais:
+        - Estado "PE" recebe box fixo.
+        - Box é definido por regras configuradas + matching de contrato/transportadora.
+        - Checkbox de emissão depende do status da carga.
+        - Cargas sem contrato seguem fluxo simplificado.
+
+    Parâmetros:
+        page:
+            Instância do Playwright usada na automação.
+
+        empresa:
+            Código da empresa utilizada no processo.
+
+        matricula:
+            Identificação do usuário.
+
+        password:
+            Senha de acesso ao sistema.
+
+        data:
+            Data de referência da operação.
+
+        rotas (list | None):
+            Lista de rotas a serem processadas. Caso não informado,
+            utiliza configuração padrão.
+
+    Retorno:
+        None
     """
     logger.info("Iniciando boxiamento de notas fiscais")
 
@@ -685,6 +1124,29 @@ def boxiamento_carga(page,
                     # ============== Extração de Carga ==============
 
                     def resolve_xpath_carga(page, i):
+                        """
+                        Resolve o XPath correto do elemento de carga na tabela.
+
+                        A função verifica se o elemento de carga está encapsulado em um link (<a>)
+                        e retorna o XPath apropriado conforme a estrutura da página.
+
+                        Lógica utilizada:
+                            - Monta o XPath base do elemento com base no índice informado.
+                            - Verifica se existe um elemento <a> dentro do caminho.
+                            - Se existir, retorna o XPath com o link.
+                            - Caso contrário, retorna o XPath base.
+
+                        Parâmetros:
+                            page:
+                                Instância do Playwright usada para interação com a página.
+
+                            i (int):
+                                Índice da linha da tabela onde a carga está localizada.
+
+                        Retorno:
+                            str:
+                                XPath correto para acesso ao elemento de carga.
+                        """
                         base = f"/html/body/form/table[8]/tbody/tr[2]/td/table[{i}]/tbody/tr/td[2]"
                         xpath_com_a = base + "/a"
 
@@ -722,6 +1184,28 @@ def boxiamento_carga(page,
                     xpath_contrato_ = page.locator(f"xpath=/html/body/form/table[8]/tbody/tr[2]/td/table[{i+1}]/tbody/tr[10]/td[2]")
 
                     def get_checkbox_state(locator):
+                        """
+                        Retorna o estado atual de um checkbox.
+
+                        A função avalia as propriedades do elemento para identificar se ele está
+                        desabilitado, marcado ou desmarcado.
+
+                        Lógica utilizada:
+                            - Verifica se o atributo "disabled" está presente.
+                            - Caso não esteja desabilitado, verifica se está selecionado.
+                            - Caso contrário, considera como desmarcado.
+
+                        Parâmetros:
+                            locator:
+                                Elemento (Playwright Locator) representando o checkbox.
+
+                        Retorno:
+                            str:
+                                Estado do checkbox:
+                                - "disabled"
+                                - "checked"
+                                - "unchecked"
+                        """
                         return (
                             "disabled" if locator.get_attribute("disabled") is not None
                             else "checked" if locator.is_checked()

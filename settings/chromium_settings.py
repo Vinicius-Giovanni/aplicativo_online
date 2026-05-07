@@ -3,7 +3,19 @@ from pathlib import Path
 
 def launch_chromium_custom(playwright):
     """
-    Inicializa o chromium com ambiente controlado
+    Inicializa uma instância do Chromium com contexto persistente e ambiente controlado.
+
+    A função cria um perfil temporário no Desktop, remove qualquer execução anterior
+    e inicializa o navegador Chromium com configurações voltadas para automação
+    estável (remoção de popups, extensões e sinais de automação).
+
+    Args:
+        playwright (Playwright): Instância do Playwright utilizada para inicializar o navegador.
+
+    Returns:
+        tuple:
+            - browser (BrowserContext): Contexto persistente do Chromium.
+            - page (Page): Primeira aba aberta no navegador.
     """
 
     desktop_path = Path.home() / 'Desktop'
