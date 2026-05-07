@@ -1,3 +1,13 @@
+
+"""
+Responsável pela construção do layout da página que executa a automação do processo de boxeamento de cargas.
+
+Esta interface permite:
+- Execução do processo de boxeamento;
+- Integração com as regras de negócio do sistema logístico.
+"""
+
+
 from PySide6.QtWidgets import (
     QWidget, QLineEdit, QPushButton, QVBoxLayout,
     QFormLayout, QMessageBox, QListWidget, QLabel, QHBoxLayout
@@ -21,6 +31,12 @@ class BoxiamentoCarga(QWidget):
         self.setup_ui()
 
     def setup_ui(self):
+        """
+        Responsável pela construção da interface da página de boxeamento,
+        incluindo a configuração dos componentes visuais, interação do usuario
+        e acionamento das funções da automação.
+        """
+
         # Data
         self.dt_entrega = QLineEdit(maxLength=8)
         self.dt_entrega.setPlaceholderText("DDMMAAAA")
@@ -59,6 +75,11 @@ class BoxiamentoCarga(QWidget):
         self.setLayout(layout)
 
     def executar_boxiamento(self):
+        """
+        Executa a automação de boxeamento a partir dos parâmetros
+        informados pelo usuário, encaminhando os dados para
+        a rotina principal de processamento.
+        """
 
         if not self.dt_entrega.text():
             QMessageBox.warning(self, "Campo obrigatório", "A data de entrega deve ser preenchida.")
@@ -96,14 +117,37 @@ class BoxiamentoCarga(QWidget):
         self.thread.start()
 
     def on_finished(self):
+        """
+        Controla o estado do botão responsável por executar
+        a automação de boxeamento.
+
+        O botão permanece desabilitado durante a execução
+        do processamento e é reabilitado após a finalização
+        da automação.
+        """
+
         QMessageBox.information(self, "Concluído", "Boxiamento de carga concluído com sucesso.")
         self.btn_executar.setEnabled(True)
 
     def on_error(self, message):
+        """
+        Controla o estado do botão de execuçã da automação.
+
+        Em caso de falha durante o processamento,
+        o botão é reabilitado para permitir uma nova tentativa. 
+        """
+
         QMessageBox.critical(self, "Erro", message)
         self.btn_executar.setEnabled(True)
 
     def carregar_rotas(self):
+        """
+        Realiza a leitura do arquivo JSON contendo as regras
+        de negócio logísticas utilizadas na lógica de boxeamento.
+
+        As regras são aplicadas considerando a rota e o código da transportadora.
+        """
+
         self.lista_rotas.clear()
 
         try:
@@ -124,6 +168,13 @@ class BoxiamentoCarga(QWidget):
             self.lista_rotas.item(i).setSelected(True)
 
     def adicionar_rota_manual(self):
+        """
+        Permite ao usuário adicionar uma rota temporária manualmente.
+
+        A rota informada não é persistida no arquivo JSON
+        e será considerada apenas durante a execução atual
+        da lógica de boxeamento.
+        """
         rota = self.input_rota_manual.text().strip()
         if not rota:
             QMessageBox.warning(self, "Campo vazio", "Digite uma rota para adicionar.")
