@@ -347,7 +347,7 @@ class ConfigWindow(QWidget):
         - Rotas vazias não são permitidas;
         - Rotas duplicadas não são adicionadas;
         - Mensagens informativas são exibidas ao usuário
-            em casos de vaidação.
+            em casos de validação.
 
         """
 
@@ -484,7 +484,13 @@ class ConfigWindow(QWidget):
         - Registros inválidos são ignorados;
         - Itens sem carga e sem rota não são persistidos;
         - Os arquivos são salvos utilizando codificação UTF-8;
-        - A 
+        - A serialização mantém indentação para facilitas
+            leitura e manutenção dos arquivos JSON.
+        
+        Exceções tratadas:
+        - OsError:
+            Exibe mensagem de erro caso ocorra falha
+            durante a gravação dos arquivos.
 
         """
 
@@ -519,6 +525,29 @@ class ConfigWindow(QWidget):
         QMessageBox.information(self, "Sucesso", "Configuraçãoes salvas com sucesso.")
 
     def restaurar_padrao(self):
+        """
+        Restaura os arquivos de configuração para os valores
+        padrão definidos pela aplicação.
+
+        Fluxo executado:
+        - Solicita confirmação do usuário antes da restauração;
+        - Recria o arquivo de rotas utilizando os valores padrão;
+        - Recria o arquivo de carga box com as configurações padrão;
+        - Recarrega as configurações na interface após a restauração;
+        - Exibe menesagens informativas de sucesso ou erro.
+
+        Arquivos restaurados:
+        - DEFAULT_ROTAS
+        - DEFAULT_CARGAS_BOX
+
+        Regras aplicadas:
+        - A restauração só é executada após confirmação explícita;
+        - As configurações atuais são sobrescritas pelos valores padrão;
+        - Os arquivos são salvos utilizando codificação UTF-8;
+        - A serialização JSON mantém indentação para facilitar
+            leitura e manutenção.
+        """
+
         resposta = QMessageBox.question(
             self,
             "Restaurar padrões",
