@@ -14,6 +14,14 @@ from app.duvidas_window import DuvidasWindow
 from app.main_window import MainWindow
 
 class LoginWindow(QWidget):
+    """
+    Janela responsável pela autenticação do usuário na aplicação.
+
+    A classe gerencia a interface de login, validação dos campos,
+    inicialização do sistema de logs e abertura da janela principal
+    após autenticação.
+    """
+        
     def __init__(self):
         super().__init__()
         self.setObjectName("LoginWindow")
@@ -25,6 +33,27 @@ class LoginWindow(QWidget):
         self.setup_ui()
 
     def setup_ui(self):
+        """
+        Configura os componentes visuais da interface de login.
+
+        A função cria a estrutura principal da tela, incluindo
+        imagem de fundo, barra superior, campos de autenticação,
+        botão de login e rodapé da aplicação.
+
+        Lógica utilizada:
+            - Define os layouts principais da interface.
+            - Configura os campos de entrada do usuário.
+            - Cria os componentes visuais da tela.
+            - Conecta os eventos dos botões às ações correspondentes.
+
+        Parâmetros:
+            self:
+                Instância atual da classe.
+
+        Retorno:
+            None
+        """ 
+
         self.background_label = QLabel(self)
         self.background_label.setObjectName("BackgroundImage")
         self.background_label.setGeometry(0, 0, self.width(), self.height())
@@ -115,6 +144,24 @@ class LoginWindow(QWidget):
         root_layout.addLayout(footer)
 
     def _build_input_row(self, line_edit: QLineEdit, icon_text: str) -> QFrame:
+        """
+        Cria um componente visual contendo um campo de entrada e um ícone.
+
+        A função encapsula a criação das linhas de entrada utilizadas
+        no formulário de login.
+
+        Parâmetros:
+            line_edit (QLineEdit):
+                Campo de entrada que será exibido.
+
+            icon_text (str):
+                Texto ou ícone associado ao campo.
+
+        Retorno:
+            QFrame:
+                Componente visual configurado.
+        """
+
         icon = QLabel(icon_text)
         icon.setObjectName("InputIcon")
 
@@ -130,12 +177,40 @@ class LoginWindow(QWidget):
         return wrapper
     
     def resizeEvent(self, event: QResizeEvent):
+        """
+        Atualiza o tamanho da imagem de fundo durante o redimensionamento da janela.
+
+        A função redefine a geometria do plano de fundo e reaplica
+        o redimensionamento proporcional da imagem.
+
+        Parâmetros:
+            event (QResizeEvent):
+                Evento de redimensionamento da janela.
+
+        Retorno:
+            None
+        """
+
         super().resizeEvent(event)
         if self.background_label is not None:
             self.background_label.setGeometry(0, 0, self.width(), self.height())
             self._refresh_background()
 
     def _refresh_background(self):
+        """
+        Atualiza a imagem de fundo da interface.
+
+        A função realiza o carregamento da imagem definida e aplica
+        o redimensionamento proporcional ao tamanho atual da janela.
+
+        Parâmetros:
+            self:
+                Instância atual da classe.
+
+        Retorno:
+            None
+        """
+
         bg_pixmap = QPixmap(str(self.background_path))
         if bg_pixmap.isNull() or self.background_label is None:
             return
@@ -145,6 +220,29 @@ class LoginWindow(QWidget):
         )
 
     def logar(self):
+        """
+        Realiza o processo de autenticação e inicialização da aplicação.
+
+        A função valida os campos de entrada, inicializa o sistema
+        de logs, cria a janela principal da aplicação e realiza
+        a transição da tela de login.
+
+        Lógica utilizada:
+            - Obtém os dados informados pelo usuário.
+            - Valida o preenchimento obrigatório dos campos.
+            - Inicializa o logger da aplicação.
+            - Cria a janela principal do sistema.
+            - Conecta o evento de logout.
+            - Exibe a aplicação principal e oculta a tela de login.
+
+        Parâmetros:
+            self:
+                Instância atual da classe.
+
+        Retorno:
+            None
+        """
+
         empresa = self.input_empresa.text()
         matricula = self.input_matricula.text()
         password = self.input_password.text()
@@ -172,6 +270,19 @@ class LoginWindow(QWidget):
         self.hide()
 
     def abrir_duvidas(self):
+        """
+        Abre a janela de informações e suporte da aplicação.
+
+        A função cria a janela de dúvidas caso ela ainda não exista
+        e garante sua exibição em primeiro plano.
+
+        Parâmetros:
+            self:
+                Instância atual da classe.
+
+        Retorno:
+            None
+        """
         if not hasattr(self, "duvidas_window") or self.duvidas_window is None:
             self.duvidas_window = DuvidasWindow()
 
@@ -182,6 +293,19 @@ class LoginWindow(QWidget):
         self.duvidas_window.activateWindow()
     
     def on_logout(self):
+        """
+        Realiza o processo de logout da aplicação.
+
+        A função limpa os dados preenchidos no formulário de login
+        e reexibe a janela principal de autenticação.
+
+        Parâmetros:
+            self:
+                Instância atual da classe.
+
+        Retorno:
+            None
+        """
         self.input_empresa.clear()
         self.input_matricula.clear()
         self.input_password.clear()

@@ -44,6 +44,15 @@ class MainWindow(QMainWindow):
 
     # setup de login
     def setup_topbar(self):
+        """
+        Configura a barra superior da aplicação.
+
+        A função cria a toolbar principal contendo informações
+        do usuário autenticado e versão atual da aplicação.
+
+        Retorno:
+            None
+        """
 
         """
         MAJOR.MINOR.PATCH
@@ -72,6 +81,20 @@ class MainWindow(QMainWindow):
         
     # sidebar
     def setup_sidebar(self):
+        """
+        Configura o menu lateral da aplicação.
+
+        A função cria os botões de navegação responsáveis
+        por acessar as funcionalidades disponíveis no sistema.
+
+        Lógica utilizada:
+            - Cria os botões do menu lateral.
+            - Conecta cada botão ao método correspondente.
+            - Organiza os componentes no layout lateral.
+
+        Retorno:
+            None
+        """
         sidebar = QFrame()
         sidebar.setObjectName("Sidebar")
 
@@ -131,6 +154,20 @@ class MainWindow(QMainWindow):
         )
 
     def _wrap_as_dock(self, widget):
+        """
+        Encapsula um widget em um componente dockável.
+
+        A função cria um QDockWidget configurado para uso
+        como painel lateral fixo da aplicação.
+
+        Parâmetros:
+            widget:
+                Componente que será encapsulado.
+
+        Retorno:
+            QDockWidget:
+                Dock configurado.
+        """
         dock = QDockWidget()
         dock.setTitleBarWidget(QWidget()) # remove title
         dock.setWidget(widget)
@@ -139,6 +176,22 @@ class MainWindow(QMainWindow):
     
     # centro
     def setup_central(self):
+        """
+        Configura a área central da aplicação.
+
+        A função inicializa o sistema de páginas utilizando
+        um QStackedWidget e registra todas as telas disponíveis
+        para navegação.
+
+        Lógica utilizada:
+            - Cria a tela inicial.
+            - Inicializa as páginas da aplicação.
+            - Adiciona as páginas na pilha de navegação.
+            - Define o widget central da janela.
+
+        Retorno:
+            None
+        """
         self.stack = QStackedWidget()
 
         # tela inicial
@@ -184,6 +237,20 @@ class MainWindow(QMainWindow):
     
     # dock
     def setup_log_dock(self,log_handler):
+        """
+        Configura o painel dockável de logs da aplicação.
+
+        A função conecta os sinais do sistema de logs às interfaces
+        de exibição e cria o painel responsável pelo monitoramento
+        dos registros em tempo real.
+
+        Parâmetros:
+            log_handler:
+                Manipulador responsável pelos eventos de log.
+
+        Retorno:
+            None
+        """
         self.log_window = LogWindow()
 
         log_handler.emitter.log_sinal.connect(
@@ -203,42 +270,105 @@ class MainWindow(QMainWindow):
         self.log_dock.hide()
 
     def toggle_logs(self):
+        """
+        Alterna a visibilidade do painel de logs.
+
+        Retorno:
+            None
+        """
         self.log_dock.setVisible(not self.log_dock.isVisible())
 
     # open windows
     def abrir_filtragem(self):
+        """
+        Abre a página de filtragem de cargas.
+
+        A função altera a página atual da aplicação
+        e garante a exibição do painel de logs.
+
+        Retorno:
+            None
+        """
         self.stack.setCurrentIndex(1)
         if self.log_dock:
             self.log_dock.show()
     
     def abrir_emissao(self):
+        """
+        Abre a página de emissão de cargas.
+
+        A função realiza o carregamento das rotas necessárias,
+        altera a página atual e exibe o painel de logs.
+
+        Retorno:
+            None
+        """
         self.emissao_page.carregar_rotas()
         self.stack.setCurrentIndex(2)
         if self.log_dock:
             self.log_dock.show()
 
     def abrir_boxiamento(self):
+        """
+        Abre a página de boxiamento de cargas.
+
+        A função realiza o carregamento das rotas necessárias,
+        altera a página atual e exibe o painel de logs.
+
+        Retorno:
+            None
+        """
         self.boxiamento_page.carregar_rotas()
         self.stack.setCurrentIndex(3)
         if self.log_dock:
             self.log_dock.show()
     
     def abrir_configuracoes(self):
+        """
+        Abre a página de configurações da aplicação.
+
+        A função carrega as configurações atuais do sistema,
+        altera a página exibida e mostra o painel de logs.
+
+        Retorno:
+            None
+        """
         self.config_page.carregar_configuracoes()
         self.stack.setCurrentIndex(4)
         if self.log_dock:
             self.log_dock.show()
 
     def abrir_exportacao_logs(self):
+        """
+        Abre a página de exportação e histórico de logs.
+
+        Retorno:
+            None
+        """
         self.stack.setCurrentIndex(5)
         if self.log_dock:
             self.log_dock.show()
 
     def abrir_duvidas(self):
+        """
+        Abre a página de dúvidas ou informações da aplicação.
+
+        Retorno:
+            None
+        """
         self.stack.setCurrentIndex(6)
         if self.log_dock:
             self.log_dock.show()
 
     def logout(self):
+        """
+        Realiza o logout da aplicação.
+
+        A função emite o sinal de logout e encerra
+        a janela principal da aplicação.
+
+        Retorno:
+            None
+        """
         self.logout_requested.emit()
         self.close()

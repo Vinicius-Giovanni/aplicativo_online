@@ -1,3 +1,25 @@
+
+"""
+Módulo responsável pela interface de filtragem de cargas da aplicação.
+
+O arquivo implementa a janela de filtros utilizando PyQt, permitindo
+ao usuário informar parâmetros como SKU, datas de expedição, modalidade
+e tipos de pedidos para execução do processo de filtragem.
+
+Principais responsabilidades:
+- Construção e organização da interface gráfica;
+- Coleta e validação dos parâmetros informados pelo usuário;
+- Execução assíncrona da filtragem utilizando QThread;
+- Tratamento de eventos de sucesso e erro durante o processamento.
+
+Componentes principais:
+- Campos de entrada (QlineEdit);
+- Checkboxes de seleção;
+- ComboBox para modalidade;
+- Botão de execução da filtragem;
+- Worker responsável pelo processamento em background.
+"""
+
 from PySide6.QtWidgets import (
     QWidget, QLineEdit, QPushButton, QVBoxLayout,
     QFormLayout, QCheckBox, QComboBox, QMessageBox
@@ -17,6 +39,13 @@ class FilterWindow(QWidget):
         self.setup_ui()
 
     def setup_ui(self):
+        """
+        Configura os componentes da interface gráfica da aplicação.
+
+        Inicializa os campos de entrada, checkboxes, seleção de modalidade,
+        botão de execução e organiza os widgets nos layouts da interface.
+        """
+
         #SKU
         self.sku = QLineEdit()
         self.sku.setPlaceholderText(" Informe o SKU")
@@ -73,9 +102,20 @@ class FilterWindow(QWidget):
 
     # Conversao checkbox sim/nao
     def yes_no(self, checkbox):
+        """
+        Retorna 'Sim' ou 'Não' com base no estado do checkbox informado.
+        """
+
         return "Sim" if checkbox.isChecked() else "Não"
 
     def executar_filtragem(self):
+        """
+        Executa o processo de filtragem de cargas.
+
+        Realiza a validação dos campos obrigatórios, monta os parâmetros
+        da execução, inicializa a thread de processamento e conecta os
+        sinais de conclusão e erro da operação.
+        """
 
         if not self.dt_entrega.text():
             QMessageBox.warning(self, "Campo obrigatório", "A data de entrega deve ser preenchida.")
@@ -118,10 +158,23 @@ class FilterWindow(QWidget):
         self.thread.start()
 
     def on_finished(self):
+        """
+        Trata a finalização do processo de filtragem.
+
+        Exibe mensagem de sucesso e reabilita o botão de execução.
+        """
+
         QMessageBox.information(self, "Concluído", "Filtragem de cargas concluída.")
         self.btn_executar.setEnabled(True)
     
     def on_error(self, message):
+        """
+        Trata erros ocorridos durante a execução da filtragem.
+
+        Args:
+            message (str): Mensagem de erro retornada pelo processo.
+        """
+
         QMessageBox.critical(self, "Erro", message)
         self.btn_executar.setEnabled(True)
 

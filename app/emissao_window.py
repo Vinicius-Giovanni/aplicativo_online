@@ -1,3 +1,20 @@
+
+"""
+Módulo responsável pela interface de emissão de cargas.
+
+Este arquivo contém a impementação da tela de emissão,
+incluindo configuração da interface gráfica, carregamento
+de rotas, validações de entrada e execução do processo
+de emissão em background utilizando threads.
+
+Principais funcionalidades:
+- Seleção de rotas para emissão
+- Inclusão manual de rotas
+- Validação de dados obrigatórios
+- Execução assíncrona do processo de emissão
+- Tratamento de sucesso e erros da operação
+"""
+
 from PySide6.QtWidgets import (
     QWidget, QLineEdit, QPushButton, QVBoxLayout,
     QFormLayout, QMessageBox, QListWidget, QLabel, QHBoxLayout
