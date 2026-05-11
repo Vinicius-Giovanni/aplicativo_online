@@ -1259,11 +1259,11 @@ def boxiamento_carga(page,
                             if estado_checkbox_antes == "checked": # <<< Checkbox estiver desmarcado
                                 xpath_checkbox_emite.click() # <<< Desmarca checkbox
 
-                        if "PE" in xpath_estado_carga:
-                            box = "921"
-                            xpath_valor_box.fill(box)
+                        # if "PE" in xpath_estado_carga:
+                        #     box = "921"
+                        #     xpath_valor_box.fill(box)
 
-                            logger.info(f"Box PE {box}")
+                        #     logger.info(f"Box PE {box}")
 
                         else:
                             # Boxiamento priorizando regras com rota e match em contrato
