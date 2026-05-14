@@ -143,7 +143,8 @@ def _resolve_box_for_carga(cargas_box_map, rota_atual, contrato, transportadora)
             4. Regras sem rota + match em contrato
             5. Regras sem rota + match em transportadora
         - Retorna o primeiro box que satisfaz a regra.
-        - Caso nenhuma regra seja atendida, retorna string vazia.
+        - Se a regra encontrada tiver box vazio (""), retorna "" explicitamente.
+        - Caso nenhuma regra seja atendida, retorna None.
 
     Parâmetros:
         cargas_box_map (list[dict]):
@@ -159,8 +160,10 @@ def _resolve_box_for_carga(cargas_box_map, rota_atual, contrato, transportadora)
             Nome da transportadora usada para matching.
 
     Retorno:
-        str:
-            Box resolvido conforme as regras ou string vazia caso não encontre.
+        str | None:
+            Retorna "" quando existe regra explicita para não boxiar.
+            Retorna none quando não encotra regra.
+
     """
     """
     Resolve o box com suporte a regra somente por rota.
@@ -185,9 +188,6 @@ def _resolve_box_for_carga(cargas_box_map, rota_atual, contrato, transportadora)
         carga_regra = str(regra.get("carga", "")).strip()
         box_regra = str(regra.get("box", "")).strip()
         rota_regra = str(regra.get("rota", "")).strip()
-
-        if not box_regra:
-            continue
 
         carga_regra_norm = _normalize_text_for_match(carga_regra)
 
@@ -223,7 +223,7 @@ def _resolve_box_for_carga(cargas_box_map, rota_atual, contrato, transportadora)
         if carga_regra_norm in transportadora_norm:
             return box_regra
 
-    return ""
+    return None
 
 def _load_cargas_box_from_config():
     """
@@ -1274,10 +1274,11 @@ def boxiamento_carga(page,
                                 transportadora=xpath_transportadora,
                             )
                             
-                            if box_resolvido:
+                            if box_resolvido is not None:
                                 xpath_valor_box.clear()
                                 box = box_resolvido
-                                xpath_valor_box.type(box)
+                                if box:
+                                    xpath_valor_box.type(box)
 
                     # ============== Tabela ==============
 
@@ -1300,7 +1301,7 @@ def boxiamento_carga(page,
 
                     page.once("dialog", handle_dialog)
                     
-                    page.wait_for_timeout(500)
+                    page.wait_for_timeout(20000)
 
                     page.locator('xpath=//*[@id="NM_BOT_LIM"]').click()
                     page.wait_for_timeout(500)
