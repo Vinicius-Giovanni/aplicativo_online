@@ -1228,23 +1228,6 @@ def boxiamento_carga(page,
 
                     xpath_transportadora = page.locator(f"xpath=/html/body/form/table[8]/tbody/tr[2]/td/table[{i+1}]/tbody/tr[9]/td[2]").inner_text()
 
-                    # ============== Condição: Se o status_carga for "Fechado" a checkbox EMITE deve ser "checked" ==============
-
-                    # ============== Lógica de Checkbox Emite ==============             
-                    if status_carga == "Fechada" : # <<< Status da carga = 'Fechada'
-
-                        if estado_checkbox_antes == "unchecked": # <<< Checkbox estiver desmarcado
-                            xpath_checkbox_emite.click() # <<< Marca checkbox
-                        
-                    elif status_carga == "Aberta": # <<< Status da carga = 'Aberta'
-
-                        if estado_checkbox_antes == "checked": # <<< Checkbox estiver marcada
-                            xpath_checkbox_emite.click() # <<< Desmarca checkbox
-
-                    estado_checkbox_depois = get_checkbox_state(xpath_checkbox_emite)
-
-                    # ============== Extração de Estado da Carga =============
-
                     xpath_estado_carga = page.locator(f"xpath=/html/body/form/table[8]/tbody/tr[2]/td/table[{i}]/tbody/tr/td[5]").inner_text()
 
                     logger.info(f"Carga do estado de {xpath_estado_carga}")
@@ -1253,32 +1236,38 @@ def boxiamento_carga(page,
                     box = ""
                     v_box = xpath_valor_box.input_value()
 
+                    box_resolvido = None
+
+                    # Boxiamento priorizando regras com rota e match em contrato
+                    box_resolvido = _resolve_box_for_carga(
+                        cargas_box_map=cargas_box_map,
+                        rota_atual=rota,
+                        contrato=xpath_contrato,
+                        transportadora=xpath_transportadora,
+                    )
+
                     if status_carga == "Fechada": # <<< Status da carga = 'Fechada' e valor do box estiver vazio
                         
-                        if v_box == "999":
-                            if estado_checkbox_antes == "checked": # <<< Checkbox estiver desmarcado
+                        if box_resolvido is not None and str(box_resolvido).strip():
+                            if v_box != "999":
+                                xpath_valor_box.clear()
+                                box = str(box_resolvido)
+                                xpath_valor_box.type(box)
+                        elif v_box != "999":
+                            box = ""
+
+                        # =========== Lógica de Checkbox Emite ===========
+                        box_preenchido = bool(box_resolvido is not None and str(box_resolvido).strip())
+                        deve_marcar_checkbox = status_carga == "Fechada" and box_preenchido
+
+                        if deve_marcar_checkbox:
+                            if estado_checkbox_antes == "unchecked": # <<< Checkbox estiver desmarcado
+                                xpath_checkbox_emite.click() # <<< Marca checkbox
+                        else:
+                            if estado_checkbox_antes == "checked": # <<< Checkbox estiver marcada
                                 xpath_checkbox_emite.click() # <<< Desmarca checkbox
 
-                        # if "PE" in xpath_estado_carga:
-                        #     box = "921"
-                        #     xpath_valor_box.fill(box)
-
-                        #     logger.info(f"Box PE {box}")
-
-                        else:
-                            # Boxiamento priorizando regras com rota e match em contrato
-                            box_resolvido = _resolve_box_for_carga(
-                                cargas_box_map=cargas_box_map,
-                                rota_atual=rota,
-                                contrato=xpath_contrato,
-                                transportadora=xpath_transportadora,
-                            )
-                            
-                            if box_resolvido is not None:
-                                xpath_valor_box.clear()
-                                box = box_resolvido
-                                if box:
-                                    xpath_valor_box.type(box)
+                    estado_checkbox_depois = get_checkbox_state(xpath_checkbox_emite)
 
                     # ============== Tabela ==============
 
