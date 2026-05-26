@@ -1300,8 +1300,6 @@ def boxiamento_carga(page,
                     page.wait_for_timeout(500)
 
                     page.once("dialog", handle_dialog)
-                    
-                    page.wait_for_timeout(20000)
 
                     page.locator('xpath=//*[@id="NM_BOT_LIM"]').click()
                     page.wait_for_timeout(500)
