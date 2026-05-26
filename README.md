@@ -128,6 +128,7 @@ pytest
 
 Exemplo de empacotamento:
 
+Powershell
 ```bash
 pyinstaller main.py `
   --onefile `
@@ -136,6 +137,11 @@ pyinstaller main.py `
   --add-data "app/assets;app/assets" `
   --add-data "app/styles;app/styles" `
   --add-data "playwright;playwright"
+```
+
+CMD
+```bash
+pyinstaller main.py --onefile --windowed --icon=app/assets/icons/app.ico --add-data "app/assets;app/assets" --add-data "app/styles;app/styles" --add-data "playwright;playwright"
 ```
 
 ## 🔒 Boas práticas operacionais
