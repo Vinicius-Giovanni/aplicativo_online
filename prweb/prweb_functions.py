@@ -1238,6 +1238,11 @@ def boxiamento_carga(page,
 
                     box_resolvido = None
 
+
+                    if "PE" in xpath_estado_carga:
+                        box = "921"
+                        xpath_valor_box.fill(box)
+                        logger.info(f'Box PE {box}')
                     # Boxiamento priorizando regras com rota e match em contrato
                     box_resolvido = _resolve_box_for_carga(
                         cargas_box_map=cargas_box_map,
