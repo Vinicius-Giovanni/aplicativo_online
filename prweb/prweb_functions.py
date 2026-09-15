@@ -1413,6 +1413,19 @@ def boxiamento_carga_par(
         pcom.send_key('[enter]')
         pcom.wait_ready()
 
+        for linha in df_consulta.itertuples(index=False):
+
+            carga_entrega = linha[0]
+
+            pcom.send_text(text=carga_entrega, row=7, column=11)
+            pcom.send_key('[enter]')
+            pcom.wait_ready()
+
+            pcom.send_text(text="N", row=21, column=44)
+
+            pcom.send_key('[enter]')
+            pcom.wait_ready()
+
         RoutineJ2CD.gotoroutineJ2CD(pcom)
         
         pcom.send_text(text=empresa, row=4, column=51)
@@ -1442,14 +1455,17 @@ def boxiamento_carga_par(
         pcom.send_text(f'01200D{dt_entrega}         21', 10, 2)
         pcom.send_key('[enter]')
         pcom.send_key('[pf4]')
+        pcom.wait_ready()
 
-        pcom.send_text(f'1211200{dt_entrega}         ', 10, 2)
+        pcom.send_text(f'1211200{dt_entrega}          ', 10, 2)
         pcom.send_key('[enter]')
         pcom.send_key('[pf4]')
+        pcom.wait_ready()
 
-        pcom.send_text(f'11200D{dt_entrega}             21', 10, 2)
+        pcom.send_text(f'11200D{dt_entrega}            21', 10, 2)
         pcom.send_key('[enter]')
         pcom.send_key('[pf4]')
+        pcom.wait_ready()
 
         pcom.send_text('N', 20, 49)
         pcom.send_key('[enter]')
