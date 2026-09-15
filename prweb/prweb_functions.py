@@ -1437,17 +1437,25 @@ def boxiamento_carga_par(
         pcom.send_key('[enter]')
         pcom.wait_ready()
 
+        teste1 = input("Press Enter teste 1")
+
         pcom.send_text('X', 15, 7)
         pcom.send_key('[enter]')
         pcom.wait_ready()
+
+        teste1 = input("Press Enter teste 1")
 
         pcom.send_text('S7J111', 4, 11)
         pcom.send_key('[enter]')
         pcom.wait_ready()
 
+        teste1 = input("Press Enter teste 1")
+
         pcom.send_text('X', 3, 49)
         pcom.send_key('[enter]')
         pcom.wait_ready()
+
+        teste1 = input("Press Enter teste 1")
 
         pcom.send_key('[enter]')
         pcom.wait_ready()
@@ -1457,17 +1465,23 @@ def boxiamento_carga_par(
         pcom.send_key('[pf4]')
         pcom.wait_ready()
 
-        pcom.send_text(f'1211200{dt_entrega}          ', 10, 2)
+        teste1 = input("Press Enter teste 1")
+
+        pcom.send_text(f'1211200D{dt_entrega}          ', 10, 2)
         pcom.send_key('[enter]')
         pcom.send_key('[pf4]')
         pcom.wait_ready()
 
-        pcom.send_text(f'11200D{dt_entrega}            21', 10, 2)
+        teste1 = input("Press Enter teste 1")
+
+        pcom.send_text(f'11200D{dt_entrega}             21', 10, 2)
         pcom.send_key('[enter]')
         pcom.send_key('[pf4]')
         pcom.wait_ready()
 
-        pcom.send_text('N', 20, 49)
+        teste1 = input("Press Enter teste 1")
+
+        pcom.send_text('S', 20, 49)
         pcom.send_key('[enter]')
 
         ResetPcomm.reset_pcom(pcom)
