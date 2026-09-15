@@ -5,7 +5,8 @@ from prweb.prweb_functions import (
     login_prweb,
     filtragem_de_carga,
     emissao_de_carga,
-    boxiamento_carga
+    boxiamento_carga,
+    boxiamento_carga_par
 )
 
 class PrwebWorker(QObject):
@@ -90,6 +91,16 @@ class PrwebWorker(QObject):
                     password=self.params["password"],
                     data=self.params["data"],
                     rotas=self.params.get("rotas")
+                )
+
+            elif action == "boxiamento par":
+                boxiamento_carga_par(
+                    page=page,
+                    empresa=self.params["empresa"],
+                    matricula=self.params["matricula"],
+                    password=self.params["password"],
+                    dt_entrega=self.params['data'],
+                    df=self.params['df']
                 )
                 
             elif action == "boxiamento":

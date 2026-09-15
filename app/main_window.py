@@ -18,6 +18,7 @@ from app.boxiamento_de_carga import BoxiamentoCarga
 from app.log_window import LogWindow
 from app.config_window import ConfigWindow
 from app.log_export_window import LogExportWindow
+from app.boxamento_par import BoxiamentoCargaPAR
 
 class MainWindow(QMainWindow):
 
@@ -63,7 +64,7 @@ class MainWindow(QMainWindow):
         PATCH => Correção de bug
         """
 
-        vs = str("4.8.14")
+        vs = str("4.9.14")
 
         topbar = QToolBar()
         topbar.setMovable(False)
@@ -114,8 +115,12 @@ class MainWindow(QMainWindow):
         btn_emitir.clicked.connect(self.abrir_emissao)
 
         # boxiamento
-        btn_boxiamento = QPushButton("📦 Boxiamento de Carga")
+        btn_boxiamento = QPushButton("📦 Boxiamento de Carga Online")
         btn_boxiamento.clicked.connect(self.abrir_boxiamento)
+
+        # boxiamento par
+        btn_boxiamento_par = QPushButton("📦 Boxiamento de Carga P.A.R")
+        btn_boxiamento_par.clicked.connect(self.abrir_boxiamento_par)
 
         # configurações
         btn_configuracoes = QPushButton("⚙️ Configurações")
@@ -139,6 +144,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(btn_filtrar)
         layout.addWidget(btn_emitir)
         layout.addWidget(btn_boxiamento)
+        layout.addWidget(btn_boxiamento_par)
         layout.addWidget(btn_configuracoes)
         layout.addWidget(btn_export_logs)
         layout.addStretch()
@@ -224,6 +230,12 @@ class MainWindow(QMainWindow):
             password=self.password
         )
 
+        self.boxiamento_page_par = BoxiamentoCargaPAR(
+            empresa=self.empresa,
+            matricula=self.matricula,
+            password=self.password
+        )
+
         self.config_page = ConfigWindow()
         self.log_export_page = LogExportWindow()
 
@@ -231,6 +243,7 @@ class MainWindow(QMainWindow):
         self.stack.addWidget(self.filter_page)
         self.stack.addWidget(self.emissao_page)
         self.stack.addWidget(self.boxiamento_page)
+        self.stack.addWidget(self.boxiamento_page_par)
         self.stack.addWidget(self.config_page)
         self.stack.addWidget(self.log_export_page)
         self.setCentralWidget(self.stack)
@@ -322,6 +335,17 @@ class MainWindow(QMainWindow):
         self.stack.setCurrentIndex(3)
         if self.log_dock:
             self.log_dock.show()
+
+    def abrir_boxiamento_par(self):
+        """
+        Abre a página de boxiamento de cargas par.
+
+        Retorno:
+            None
+        """
+        self.stack.setCurrentIndex(4)
+        if self.log_dock:
+            self.log_dock.show()
     
     def abrir_configuracoes(self):
         """
@@ -334,7 +358,7 @@ class MainWindow(QMainWindow):
             None
         """
         self.config_page.carregar_configuracoes()
-        self.stack.setCurrentIndex(4)
+        self.stack.setCurrentIndex(5)
         if self.log_dock:
             self.log_dock.show()
 
@@ -345,7 +369,7 @@ class MainWindow(QMainWindow):
         Retorno:
             None
         """
-        self.stack.setCurrentIndex(5)
+        self.stack.setCurrentIndex(6)
         if self.log_dock:
             self.log_dock.show()
 
@@ -356,7 +380,7 @@ class MainWindow(QMainWindow):
         Retorno:
             None
         """
-        self.stack.setCurrentIndex(6)
+        self.stack.setCurrentIndex(7)
         if self.log_dock:
             self.log_dock.show()
 

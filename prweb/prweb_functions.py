@@ -1341,3 +1341,43 @@ def boxiamento_carga(page,
         logger.info(tabulate(tabela_geral, headers="keys", tablefmt="grid"))
     else:
         logger.info("Nenhum registro encontrado para boxiamento de cargas.")
+
+
+
+def boxiamento_carga_par(page,
+                         empresa,
+                         matricula,
+                         password,
+                         dt_entrega,
+                         df
+                         ):
+    import pandas as pd
+    from prweb.S7EA import RoutineS7EA
+    from prweb.reset import ResetPcomm
+    from prweb.client import PcommClient
+
+    df_consulta = (
+        df[
+            [
+                'CARGA ENTREGA',
+                'BOX'
+            ]
+        ]
+        .drop_duplicates(
+            subset=['CARGA ENTREGA']
+        )
+        .reset_index(drop=True)
+    )
+
+    with PcommClient() as pcom:
+
+        RoutineS7EA.gotoroutineS7EA(pcom)
+
+        pcom.send_text(text=empresa, row=3, column=51)
+        pcom.send_text(text=matricula, row=3, column=54)
+        pcom.send_text(text=password, row=3, column=70)
+
+        pcom.send_text('4', 8, 5)
+        pcom.send_text('2', 3, 22)
+        pcom.send_key('[enter]')
+        pcom.wait_ready()
