@@ -1401,7 +1401,7 @@ def boxiamento_carga_par(
             pcom.send_key('[enter]')
             pcom.wait_ready()
 
-            pcom.send_text(text="N", row=20, column=26)
+            pcom.send_text(text="S", row=20, column=26)
             pcom.send_key('[enter]')
             pcom.wait_ready()
 
@@ -1421,7 +1421,7 @@ def boxiamento_carga_par(
             pcom.send_key('[enter]')
             pcom.wait_ready()
 
-            pcom.send_text(text="N", row=21, column=44)
+            pcom.send_text(text="S", row=21, column=44)
 
             pcom.send_key('[enter]')
             pcom.wait_ready()
