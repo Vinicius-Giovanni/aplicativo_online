@@ -34,97 +34,111 @@ class PrwebWorker(QObject):
 
     def run(self):
         """
-        Executa o fluxo principal de automação no PRWEB.
-
-        Fluxo:
-            1. Inicializa navegador via Playwright
-            2. Realiza login no sistema PRWEB
-            3. Executa a ação definida em params["action"]:
-                - "filtragem" → filtragem_de_carga
-                - "emissao" → emissao_de_carga
-                - "boxiamento" → boxiamento_carga
-            4. Emite sinal de sucesso ou erro
-            5. Finaliza e fecha navegador de forma segura
-
-        Sinais emitidos:
-            - succeeded: execução concluída com sucesso
-            - error(str): erro capturado durante execução
-            - finished: sempre emitido ao final (cleanup garantido)
+        Executa o fluxo de automação definido em params["action"].
         """
-        try:
-            playwright, browser, page = start_browser()
 
-            login_prweb(
-                page=page,
-                empresa=self.params["empresa"],
-                matricula=self.params["matricula"],
-                password=self.params["password"]
-            )
+        playwright = None
+        browser = None
+
+        try:
+
+            # ==========================================================
+            # BOXIAMENTO PAR
+            # ==========================================================
+            # Essa automação NÃO utiliza Playwright.
+            # Portanto, executamos diretamente antes de iniciar
+            # o navegador.
+            # ==========================================================
 
             action = self.params.get("action")
 
-            if action == "filtragem":
-                filtragem_de_carga(
-                    page=page,
+            if action == "boxiamento par":
+
+                boxiamento_carga_par(
                     empresa=self.params["empresa"],
                     matricula=self.params["matricula"],
                     password=self.params["password"],
-                    sku=self.params.get("sku", ""),
-                    dt_limite_exp_retro=self.params["dt_limite_exp_retro"],
-                    dt_limite_exp_posterior=self.params["dt_limite_exp_posterior"],
-                    dt_limite_exp_start=self.params["dt_limite_exp_start"],
-                    dt_limite_exp_end=self.params["dt_limite_exp_end"],
-                    mono=self.params["mono"],
-                    multiplo=self.params["multiplo"],
-                    B2B=self.params["B2B"],
-                    B2C=self.params["B2C"],
-                    CROSSDOCKING=self.params["CROSSDOCKING"],
-                    dt_entrega=self.params["dt_entrega"],
-                    modalidade=self.params["modalidade"]
-                )
-            
-            elif action == "emissao":
-                emissao_de_carga(
-                    page=page,
-                    empresa=self.params["empresa"],
-                    matricula=self.params["matricula"],
-                    password=self.params["password"],
-                    data=self.params["data"],
-                    rotas=self.params.get("rotas")
+                    dt_entrega=self.params["data"],
+                    df=self.params["df"]
                 )
 
-            elif action == "boxiamento par":
-                boxiamento_carga_par(
-                    page=page,
-                    empresa=self.params["empresa"],
-                    matricula=self.params["matricula"],
-                    password=self.params["password"],
-                    dt_entrega=self.params['data'],
-                    df=self.params['df']
-                )
-                
-            elif action == "boxiamento":
-                boxiamento_carga(
-                    page=page,
-                    empresa=self.params["empresa"],
-                    matricula=self.params["matricula"],
-                    password=self.params["password"],
-                    data=self.params["data"],
-                    rotas=self.params.get("rotas")
-                )
             else:
-                raise ValueError("Ação não reconhecida, verifique o módulo prweb_worker")
-            
+
+                # ======================================================
+                # AUTOMAÇÕES QUE UTILIZAM PLAYWRIGHT
+                # ======================================================
+
+                playwright, browser, page = start_browser()
+
+                login_prweb(
+                    page=page,
+                    empresa=self.params["empresa"],
+                    matricula=self.params["matricula"],
+                    password=self.params["password"]
+                )
+
+                if action == "filtragem":
+
+                    filtragem_de_carga(
+                        page=page,
+                        empresa=self.params["empresa"],
+                        matricula=self.params["matricula"],
+                        password=self.params["password"],
+                        sku=self.params.get("sku", ""),
+                        dt_limite_exp_retro=self.params["dt_limite_exp_retro"],
+                        dt_limite_exp_posterior=self.params["dt_limite_exp_posterior"],
+                        dt_limite_exp_start=self.params["dt_limite_exp_start"],
+                        dt_limite_exp_end=self.params["dt_limite_exp_end"],
+                        mono=self.params["mono"],
+                        multiplo=self.params["multiplo"],
+                        B2B=self.params["B2B"],
+                        B2C=self.params["B2C"],
+                        CROSSDOCKING=self.params["CROSSDOCKING"],
+                        dt_entrega=self.params["dt_entrega"],
+                        modalidade=self.params["modalidade"]
+                    )
+
+                elif action == "emissao":
+
+                    emissao_de_carga(
+                        page=page,
+                        empresa=self.params["empresa"],
+                        matricula=self.params["matricula"],
+                        password=self.params["password"],
+                        data=self.params["data"],
+                        rotas=self.params.get("rotas")
+                    )
+
+                elif action == "boxiamento":
+
+                    boxiamento_carga(
+                        page=page,
+                        empresa=self.params["empresa"],
+                        matricula=self.params["matricula"],
+                        password=self.params["password"],
+                        data=self.params["data"],
+                        rotas=self.params.get("rotas")
+                    )
+
+                else:
+                    raise ValueError(
+                        "Ação não reconhecida, verifique o módulo prweb_worker"
+                    )
+
+            # Se chegou aqui sem exceção, deu certo.
             self.succeeded.emit()
 
         except Exception as e:
+
             self.error.emit(str(e))
 
         finally:
-            try:
+
+            # Só tenta fechar o navegador se ele realmente foi iniciado.
+            if browser:
                 browser.close()
+
+            if playwright:
                 playwright.stop()
-            except:
-                pass
 
             self.finished.emit()

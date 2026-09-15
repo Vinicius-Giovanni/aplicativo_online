@@ -1344,7 +1344,7 @@ def boxiamento_carga(page,
 
 
 
-def boxiamento_carga_par(page,
+def boxiamento_carga_par(
                          empresa,
                          matricula,
                          password,
@@ -1353,8 +1353,9 @@ def boxiamento_carga_par(page,
                          ):
     import pandas as pd
     from prweb.S7EA import RoutineS7EA
-    from prweb.reset import ResetPcomm
+    from prweb.J2CD import RoutineJ2CD
     from prweb.client import PcommClient
+    from prweb.reset import ResetPcomm
 
     df_consulta = (
         df[
@@ -1378,6 +1379,80 @@ def boxiamento_carga_par(page,
         pcom.send_text(text=password, row=3, column=70)
 
         pcom.send_text('4', 8, 5)
-        pcom.send_text('2', 3, 22)
+        pcom.send_text('2', 20, 4)
         pcom.send_key('[enter]')
         pcom.wait_ready()
+
+        pcom.send_text('1', 5, 22)
+        pcom.send_text('1', 21, 4)
+        pcom.send_key('[enter]')
+        pcom.wait_ready()
+
+        for linha in df_consulta.itertuples(index=False):
+
+            carga_entrega = linha[0]
+            box = linha[1]
+
+            pcom.send_text(text=carga_entrega, row=5, column=26)
+            pcom.send_key('[enter]')
+            pcom.wait_ready()
+
+            pcom.send_text(text=box, row=9, column=26)
+            pcom.send_key('[enter]')
+            pcom.wait_ready()
+
+            pcom.send_text(text="N", row=20, column=26)
+            pcom.send_key('[enter]')
+            pcom.wait_ready()
+
+        pcom.send_key('[pf3]')
+        pcom.wait_ready()
+
+        pcom.send_text('1', 5, 22)
+        pcom.send_text('5', 21, 4)
+        pcom.send_key('[enter]')
+        pcom.wait_ready()
+
+        RoutineJ2CD.gotoroutineJ2CD(pcom)
+        
+        pcom.send_text(text=empresa, row=4, column=51)
+        pcom.send_text(text=matricula, row=4, column=54)
+        pcom.send_text(text=password, row=4, column=70)
+
+        pcom.send_text('3', 7, 13)
+        pcom.send_text('6', 21, 3)
+        pcom.send_key('[enter]')
+        pcom.wait_ready()
+
+        pcom.send_text('X', 15, 7)
+        pcom.send_key('[enter]')
+        pcom.wait_ready()
+
+        pcom.send_text('S7J111', 4, 11)
+        pcom.send_key('[enter]')
+        pcom.wait_ready()
+
+        pcom.send_text('X', 3, 49)
+        pcom.send_key('[enter]')
+        pcom.wait_ready()
+
+        pcom.send_key('[enter]')
+        pcom.wait_ready()
+
+        pcom.send_text(f'01200D{dt_entrega}         21', 10, 2)
+        pcom.send_key('[enter]')
+        pcom.send_key('[pf4]')
+
+        pcom.send_text(f'1211200{dt_entrega}         ', 10, 2)
+        pcom.send_key('[enter]')
+        pcom.send_key('[pf4]')
+
+        pcom.send_text(f'11200D{dt_entrega}             21', 10, 2)
+        pcom.send_key('[enter]')
+        pcom.send_key('[pf4]')
+
+        pcom.send_text('N', 20, 49)
+        pcom.send_key('[enter]')
+
+        ResetPcomm.reset_pcom(pcom)
+

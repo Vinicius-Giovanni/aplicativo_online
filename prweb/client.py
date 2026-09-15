@@ -54,7 +54,7 @@ class PcommClient:
         terminaç específico
         """
 
-        self.session.SetConnectionBuHandle(
+        self.session.SetConnectionByHandle(
             target.Handle
         )
         """
@@ -90,10 +90,10 @@ class PcommClient:
         self.session = None
         self.conn_list = None
 
-    try:
-        pythoncom.CoUninitialize()
-    except Exception:
-        pass
+        try:
+            pythoncom.CoUninitialize()
+        except Exception:
+            pass
 
     def send_text(
             self,
@@ -106,7 +106,7 @@ class PcommClient:
         """
 
         if row is not None and column is not None:
-            self.ps.SetCursosPos(row, column)
+            self.ps.SetCursorPos(row, column)
 
         self.ps.SendKeys(text)
 
