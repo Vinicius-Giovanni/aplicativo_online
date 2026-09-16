@@ -64,7 +64,7 @@ class MainWindow(QMainWindow):
         PATCH => Correção de bug
         """
 
-        vs = str("4.9.14")
+        vs = str("4.10.14")
 
         topbar = QToolBar()
         topbar.setMovable(False)
