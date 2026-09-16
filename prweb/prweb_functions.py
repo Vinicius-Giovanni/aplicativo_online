@@ -1356,6 +1356,7 @@ def boxiamento_carga_par(
     from prweb.J2CD import RoutineJ2CD
     from prweb.client import PcommClient
     from prweb.reset import ResetPcomm
+    import time
 
     df_consulta = (
         df[
@@ -1394,6 +1395,7 @@ def boxiamento_carga_par(
             box = linha[1]
 
             pcom.send_text(text=carga_entrega, row=5, column=26)
+            pcom.send_text(text=dt_entrega, row=8, column=26)
             pcom.send_key('[enter]')
             pcom.wait_ready()
 
@@ -1416,13 +1418,20 @@ def boxiamento_carga_par(
         for linha in df_consulta.itertuples(index=False):
 
             carga_entrega = linha[0]
-
             pcom.send_text(text=carga_entrega, row=7, column=11)
+
             pcom.send_key('[enter]')
             pcom.wait_ready()
 
+            FECHADA = pcom.wait_text(7, 7, 20)
+            print(FECHADA)
+            if FECHADA == "FECHADA":
+                pcom.send_key('[end]')
+                continue
+
             pcom.send_text(text="S", row=21, column=44)
 
+            pcom.send_key('[enter]')
             pcom.send_key('[enter]')
             pcom.wait_ready()
 
@@ -1437,25 +1446,17 @@ def boxiamento_carga_par(
         pcom.send_key('[enter]')
         pcom.wait_ready()
 
-        teste1 = input("Press Enter teste 1")
-
         pcom.send_text('X', 15, 7)
         pcom.send_key('[enter]')
         pcom.wait_ready()
-
-        teste1 = input("Press Enter teste 1")
 
         pcom.send_text('S7J111', 4, 11)
         pcom.send_key('[enter]')
         pcom.wait_ready()
 
-        teste1 = input("Press Enter teste 1")
-
         pcom.send_text('X', 3, 49)
         pcom.send_key('[enter]')
         pcom.wait_ready()
-
-        teste1 = input("Press Enter teste 1")
 
         pcom.send_key('[enter]')
         pcom.wait_ready()
@@ -1465,21 +1466,15 @@ def boxiamento_carga_par(
         pcom.send_key('[pf4]')
         pcom.wait_ready()
 
-        teste1 = input("Press Enter teste 1")
-
         pcom.send_text(f'1211200D{dt_entrega}          ', 10, 2)
         pcom.send_key('[enter]')
         pcom.send_key('[pf4]')
         pcom.wait_ready()
 
-        teste1 = input("Press Enter teste 1")
-
         pcom.send_text(f'11200D{dt_entrega}             21', 10, 2)
         pcom.send_key('[enter]')
         pcom.send_key('[pf4]')
         pcom.wait_ready()
-
-        teste1 = input("Press Enter teste 1")
 
         pcom.send_text('S', 20, 49)
         pcom.send_key('[enter]')

@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import QThread
 from workers.prweb_worker import PrwebWorker
 from settings.config import AppConfig
+from PySide6.QtWidgets import QFileDialog
 
 class BoxiamentoCargaPAR(QWidget):
     def __init__(self, empresa, matricula, password):
@@ -55,6 +56,7 @@ class BoxiamentoCargaPAR(QWidget):
 
         # Tabela
         self.tabela_planejamento = QTableWidget()
+        self.tabela_planejamento.setObjectName("TabelaPlanejamento")
         self.tabela_planejamento.setVisible(False)
 
         self.tabela_planejamento.setColumnCount(0)
@@ -74,6 +76,12 @@ class BoxiamentoCargaPAR(QWidget):
         self.btn_executar_par = QPushButton("Executar Boxiamento de Cargas BrSamor")
         self.btn_executar_par.clicked.connect(self.executar_boxiamento_par)
 
+        # Botão baixar tabela
+        self.btn_baixar_tabela = QPushButton("Baixar tabela")
+        self.btn_baixar_tabela.clicked.connect(self.baixar_tabela)
+
+        self.btn_baixar_tabela.setEnabled(False)
+
         # Layout
         form = QFormLayout()
         form.addRow("Data Processamento:", self.dt_entrega_par)
@@ -84,6 +92,7 @@ class BoxiamentoCargaPAR(QWidget):
         layout.addWidget(self.drop_area)
         layout.addWidget(self.lbl_arquivo)
         layout.addWidget(self.tabela_planejamento)
+        layout.addWidget(self.btn_baixar_tabela)
         layout.addWidget(self.btn_executar_par)
         self.setLayout(layout)
 
@@ -124,6 +133,7 @@ class BoxiamentoCargaPAR(QWidget):
             df = pd.read_excel(caminho)
 
             self.df_planejamento = ler_e_tratar_planejamento(df)
+            self.btn_baixar_tabela.setEnabled(True)
 
             # att info do arquivo
             self.lbl_arquivo.setText(
@@ -229,6 +239,42 @@ class BoxiamentoCargaPAR(QWidget):
 
         QMessageBox.critical(self, "Erro", message)
         self.btn_executar_par.setEnabled(True)
+
+    def baixar_tabela(self):
+        if self.df_planejamento is None or self.df_planejamento.empty:
+            QMessageBox.warning(self,
+                                "Aviso",
+                                "Não existe uma tabela para baixar.")
+            return
+
+        caminho, _ = QFileDialog.getSaveFileName(
+            self,
+            "Salvar tabela",
+            "planejamento_tratado_xlsx",
+            "Excel (*.xlsx)"
+        )
+
+        if not caminho:
+            return
+
+        try:
+            self.df_planejamento.to_excel(
+                caminho,
+                index=False
+            )
+
+            QMessageBox.information(
+                self,
+                "Sucesso",
+                "Tabela salva com sucesso!"
+            )
+
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                "Erro",
+                f"Não foi possível salvar a tabela:\n{e}"
+            )
 
 
 class DropArea(QFrame):

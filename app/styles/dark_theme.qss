@@ -299,3 +299,39 @@ QLabel#DuvidaTopicoTexto {
     color: rgba(255, 255, 255, 0.88);
     padding: 4px;
 }
+
+
+QTableWidget#TabelaPlanejamento {
+    background-color: #0A0A0A;
+    color: #FFFFFF;
+    border: 1px solid #2B2F59;
+    gridline-color: #252525;
+    selection-background-color: #5B3BFF;
+    selection-color: #FFFFFF;
+    alternate-background-color: #101010;
+}
+
+QTableWidget#TabelaPlanejamento::item {
+    background-color: #0A0A0A;
+    color: #FFFFFF;
+    padding: 6px;
+}
+
+QTableWidget#TabelaPlanejamento::item:selected {
+    background-color: #5B3BFF;
+    color: #FFFFFF;
+}
+
+QTableWidget#TabelaPlanejamento QHeaderView::section {
+    background-color: #171A34;
+    color: #FFFFFF;
+    font-weight: 600;
+    padding: 8px;
+    border: 1px solid #2B2F59;
+}
+
+QTableWidget#TabelaPlanejamento QHeaderView::section:vertical {
+    background-color: #171A34;
+    color: #FFFFFF;
+    border: 1px solid #2B2F59;
+}
